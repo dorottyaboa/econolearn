@@ -4,7 +4,7 @@ import json
 import hashlib
 from datetime import datetime, date
 
-st.set_page_config(page_title="EconoLearn", page_icon="📈", layout="wide")
+st.set_page_config(page_title="EconoLearn", page_icon="🎨", layout="wide")
 
 # ─────────────────────────────────────────────
 # CONTENT DATABASE
@@ -1160,30 +1160,115 @@ BADGE_ICONS = {
 }
 
 # ─────────────────────────────────────────────
-# CSS
+# CSS OVERHAUL (COMIC-PASTEL THEME)
 # ─────────────────────────────────────────────
 
 st.markdown("""
 <style>
-    .main-title { font-size: 2.5rem; font-weight: 800; color: #1a1a2e !important; margin-bottom: 0; }
-    .subtitle { color: #444 !important; margin-top: 0; margin-bottom: 1.5rem; }
-    .card { background: #f0f4ff !important; color: #111 !important; border-radius: 12px; padding: 1.2rem 1.5rem; margin-bottom: 1rem; border-left: 4px solid #0066cc; }
-    .card * { color: #111 !important; }
-    .card-green { border-left-color: #28a745 !important; background: #e6f9ec !important; }
-    .card-red { border-left-color: #dc3545 !important; background: #fdecea !important; }
-    .card-gold { border-left-color: #e6a817 !important; background: #fff8e1 !important; }
-    .level-badge { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
-    .beginner { background: #dbeafe !important; color: #1e40af !important; }
-    .intermediate { background: #ffedd5 !important; color: #c2410c !important; }
-    .advanced { background: #fce7f3 !important; color: #9d174d !important; }
-    .xp-bar { background: #d1d5db; border-radius: 10px; height: 12px; overflow: hidden; }
-    .xp-fill { background: linear-gradient(90deg, #0066cc, #00ccaa); border-radius: 10px; height: 12px; }
-    .history-card { background: #f9fafb !important; color: #111 !important; border-radius: 10px; padding: 1rem 1.5rem; margin-bottom: 1rem; border: 1px solid #e5e7eb; }
-    .history-card * { color: #111 !important; }
-    .era-tag { background: #1a1a2e !important; color: #fff !important; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem; }
-    .concept-box { background: #dbeafe !important; border-radius: 8px; padding: 0.6rem 1rem; margin: 0.3rem; display: inline-block; font-weight: 600; color: #1e3a8a !important; font-size: 0.9rem; }
-    .chain-arrow { font-size: 1.5rem; color: #0066cc !important; margin: 0.2rem; }
-    .stButton > button { border-radius: 8px; font-weight: 600; }
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap');
+
+    html, body, [class*="st-emotion-cache"] {
+        font-family: 'Nunito', sans-serif;
+        background-color: #fffaf0 !important; /* Soft Cream */
+    }
+
+    .main-title { 
+        font-size: 3.5rem; 
+        font-weight: 800; 
+        color: #ff85a2 !important; /* Pastel Pink */
+        text-shadow: 3px 3px 0px #ffe5ec;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+    
+    .subtitle { 
+        color: #6d6875 !important; 
+        font-size: 1.3rem;
+        margin-top: 0; 
+        margin-bottom: 2rem; 
+        text-align: center;
+        font-weight: 700;
+    }
+
+    /* Comic Style Cards */
+    .card { 
+        background: #ffffff !important; 
+        color: #6d6875 !important; 
+        border-radius: 30px; 
+        padding: 1.5rem; 
+        margin-bottom: 1.5rem; 
+        border: 4px solid #f1f2f6;
+        box-shadow: 10px 10px 0px #e0e0e0; /* Hard Offset Shadow */
+    }
+    
+    .card-blue { border-color: #bae6fd !important; background: #f0f9ff !important; box-shadow: 10px 10px 0px #bae6fd; }
+    .card-green { border-color: #bbf7d0 !important; background: #f0fdf4 !important; box-shadow: 10px 10px 0px #bbf7d0; }
+    .card-red { border-color: #fecaca !important; background: #fef2f2 !important; box-shadow: 10px 10px 0px #fecaca; }
+    .card-gold { border-color: #fef08a !important; background: #fefce8 !important; box-shadow: 10px 10px 0px #fef08a; }
+
+    /* Cute Buttons */
+    .stButton > button {
+        border-radius: 50px !important;
+        border: none !important;
+        background-color: #ffb7b2 !important; /* Pastel Coral */
+        color: white !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 800 !important;
+        font-size: 1.1rem !important;
+        box-shadow: 0px 6px 0px #ff8a8a !important;
+        transition: all 0.1s ease !important;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(2px) !important;
+        box-shadow: 0px 4px 0px #ff8a8a !important;
+        background-color: #ff9aa2 !important;
+    }
+
+    .stButton > button:active {
+        transform: translateY(6px) !important;
+        box-shadow: 0px 0px 0px #ff8a8a !important;
+    }
+
+    /* Level Badge Stickers */
+    .level-badge { 
+        display: inline-block; 
+        padding: 6px 18px; 
+        border-radius: 20px; 
+        font-size: 0.9rem; 
+        font-weight: 800; 
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .beginner { background: #b2e2f2 !important; color: #075985 !important; }
+    .intermediate { background: #ffdac1 !important; color: #9a3412 !important; }
+    .advanced { background: #e2f0cb !important; color: #3f6212 !important; }
+
+    /* XP Bar */
+    .xp-bar { background: #f1f2f6; border-radius: 50px; height: 22px; border: 3px solid #e2e8f0; overflow: hidden; }
+    .xp-fill { background: linear-gradient(90deg, #ffb7b2, #ffdac1); height: 100%; border-radius: 50px; }
+
+    /* Concept Bubble */
+    .concept-box { 
+        background: #ffffff !important; 
+        border: 4px solid #bae6fd !important;
+        border-radius: 25px; 
+        padding: 10px 20px; 
+        margin: 8px; 
+        display: inline-block; 
+        font-weight: 800; 
+        color: #0369a1 !important;
+        box-shadow: 5px 5px 0px #bae6fd;
+    }
+
+    /* Era Tag */
+    .era-tag { background: #ffdac1 !important; color: #9a3412 !important; padding: 4px 12px; border-radius: 15px; font-weight: 800; font-size: 0.8rem; }
+
+    /* Sidebar Sidebar Section */
+    section[data-testid="stSidebar"] {
+        background-color: #fff5f5 !important;
+        border-right: 2px dashed #ffb7b2;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -1192,16 +1277,17 @@ st.markdown("""
 # ─────────────────────────────────────────────
 
 with st.sidebar:
-    st.markdown("## 📈 EconoLearn")
+    st.markdown("<h1 style='text-align:center;'>📈 EconoLearn</h1>", unsafe_allow_html=True)
     st.markdown("---")
 
     # XP display
     xp = st.session_state.xp
     xp_level = min(xp // 100, 10)
     xp_progress = (xp % 100) / 100
-    st.markdown(f"**XP: {xp}** | Level {xp_level}")
+    st.markdown(f"**Level {xp_level} Explorer** ✨")
     st.markdown(f"""
     <div class="xp-bar"><div class="xp-fill" style="width:{int(xp_progress*100)}%">&nbsp;</div></div>
+    <p style='text-align:right; font-size:0.8rem;'>{xp} XP to next level</p>
     """, unsafe_allow_html=True)
 
     if st.session_state.badges:
@@ -1209,10 +1295,9 @@ with st.sidebar:
         st.markdown(f"**Badges**: {badge_str}")
 
     st.markdown(f"**Streak**: {'🔥' * min(st.session_state.streak, 7)} {st.session_state.streak} days")
-    st.markdown(f"**Quiz accuracy**: {st.session_state.correct_answered}/{st.session_state.total_answered}")
 
     st.markdown("---")
-    st.markdown("### Navigation")
+    st.markdown("### 🗺️ Navigation")
     pages = ["Home", "Daily Lesson", "Quiz", "Scenarios", "Fill in the Blanks", "Concept Chains", "Economic History", "My Progress"]
     page_icons = ["🏠", "📚", "❓", "🎯", "✍️", "🔗", "🏛️", "📊"]
     for icon, pg in zip(page_icons, pages):
@@ -1220,21 +1305,12 @@ with st.sidebar:
             st.session_state.page = pg
 
     st.markdown("---")
-    st.markdown("### Level")
+    st.markdown("### 🏆 Mastery Level")
     for lvl in LEVELS:
-        cls = lvl.lower()
-        badge = f'<span class="level-badge {cls}">{lvl}</span>'
         if st.button(lvl, key=f"lvl_{lvl}", use_container_width=True):
             st.session_state.level = lvl
             st.rerun()
-    st.markdown(f"**Active**: {st.session_state.level}")
-
-    st.markdown("---")
-    st.markdown("### Topic")
-    selected_topic = st.selectbox("Focus topic", list(TOPICS.keys()), index=list(TOPICS.keys()).index(st.session_state.topic), label_visibility="collapsed")
-    if selected_topic != st.session_state.topic:
-        st.session_state.topic = selected_topic
-        st.rerun()
+    st.markdown(f"Current: <span class='level-badge {st.session_state.level.lower()}'>{st.session_state.level}</span>", unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 # PAGES
@@ -1247,53 +1323,50 @@ topic = st.session_state.topic
 # ── HOME ──────────────────────────────────────
 if page == "Home":
     st.markdown('<p class="main-title">📈 EconoLearn</p>', unsafe_allow_html=True)
-    st.markdown('<p class="subtitle">Master economics — from supply & demand to financial crises.</p>', unsafe_allow_html=True)
+    st.markdown('<p class="subtitle">Master the world of money, markets, and human choice!</p>', unsafe_allow_html=True)
 
     daily_topic = get_daily_topic()
     today_str = str(date.today())
 
+    # Dashboard Metrics in Cards
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.metric("Your XP", f"{st.session_state.xp} XP")
+        st.markdown(f"<div class='card' style='text-align:center;'>✨ <b>Total XP</b><br><span style='font-size:2rem; font-weight:800;'>{st.session_state.xp}</span></div>", unsafe_allow_html=True)
     with col2:
-        st.metric("Accuracy", f"{st.session_state.correct_answered}/{st.session_state.total_answered}" if st.session_state.total_answered else "—")
+        accuracy = f"{int((st.session_state.correct_answered/st.session_state.total_answered)*100)}%" if st.session_state.total_answered else "—"
+        st.markdown(f"<div class='card' style='text-align:center;'>🎯 <b>Accuracy</b><br><span style='font-size:2rem; font-weight:800;'>{accuracy}</span></div>", unsafe_allow_html=True)
     with col3:
-        st.metric("Streak", f"{st.session_state.streak} days 🔥")
+        st.markdown(f"<div class='card' style='text-align:center;'>🔥 <b>Streak</b><br><span style='font-size:2rem; font-weight:800;'>{st.session_state.streak}</span></div>", unsafe_allow_html=True)
 
-    st.markdown("---")
-
-    st.markdown(f"### Today's Topic: {TOPICS[daily_topic]} {daily_topic}")
+    st.markdown(f"### 📬 Today's Challenge: {TOPICS[daily_topic]} {daily_topic}")
     lesson = LESSONS.get(daily_topic, {}).get(level)
     if lesson:
-        st.markdown(f"<div class='card'><b>{lesson['title']}</b><br><small>Level: <span class='level-badge {level.lower()}'>{level}</span></small></div>", unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class='card card-blue'>
+            <b>{lesson['title']}</b><br>
+            <small>New concept ready for you at the <b>{level}</b> level!</small>
+        </div>
+        """, unsafe_allow_html=True)
+        
         if today_str not in st.session_state.daily_done:
-            if st.button("Start Today's Lesson →", type="primary"):
+            if st.button("Start Today's Quest →", type="primary", use_container_width=True):
                 st.session_state.page = "Daily Lesson"
                 st.session_state.topic = daily_topic
                 st.session_state.daily_done.add(today_str)
                 award_xp(10, "Daily lesson started")
                 st.rerun()
         else:
-            st.success("✅ Today's lesson completed! +10 XP earned.")
+            st.success("✅ Quest completed! Check back tomorrow for more.")
 
     st.markdown("---")
-    st.markdown("### Quick Start")
-    cols = st.columns(3)
-    quick_actions = [("❓ Take a Quiz", "Quiz"), ("🎯 Scenario Exercise", "Scenarios"), ("🏛️ Economic History", "Economic History")]
-    for col, (label, pg) in zip(cols, quick_actions):
-        with col:
-            if st.button(label, use_container_width=True):
-                st.session_state.page = pg
-                st.rerun()
-
-    st.markdown("---")
-    st.markdown("### Topics Available")
+    st.markdown("### 🗺️ Explore All Topics")
     topic_cols = st.columns(5)
     for i, (t, icon) in enumerate(TOPICS.items()):
         with topic_cols[i % 5]:
-            has_lesson = t in LESSONS
-            color = "#0055bb" if has_lesson else "#555555"
-            st.markdown(f"<div style='text-align:center;padding:8px;background:#dbeafe;border-radius:8px;margin:4px;font-size:0.85rem;'><span style='color:{color};font-weight:700;'>{icon} {t}</span></div>", unsafe_allow_html=True)
+            if st.button(f"{icon}\n{t}", key=f"topic_btn_{t}", use_container_width=True):
+                st.session_state.topic = t
+                st.session_state.page = "Daily Lesson"
+                st.rerun()
 
 # ── DAILY LESSON ──────────────────────────────
 elif page == "Daily Lesson":
@@ -1303,34 +1376,34 @@ elif page == "Daily Lesson":
     st.markdown(f"<span class='level-badge {level.lower()}'>{level}</span>", unsafe_allow_html=True)
 
     if not lesson:
-        st.info(f"No lesson yet for '{topic}' at {level} level. Try another topic or level!")
+        st.markdown(f"<div class='card card-red'>Oh no! No lesson for <b>{topic}</b> at the <b>{level}</b> level yet. Try another combo!</div>", unsafe_allow_html=True)
     else:
         st.markdown(f"## {lesson['title']}")
-        st.markdown(lesson['content'])
+        # Content in a big bubble card
+        st.markdown(f"<div class='card'>{lesson['content']}</div>", unsafe_allow_html=True)
 
         if lesson.get('key_terms'):
-            st.markdown("---")
-            st.markdown("### 🔑 Key Terms")
+            st.markdown("### 🔑 Vocabulary Stickers")
             cols = st.columns(2)
             for i, (term, definition) in enumerate(lesson['key_terms'].items()):
                 with cols[i % 2]:
-                    st.markdown(f"<div class='card'><b>{term}</b><br><small>{definition}</small></div>", unsafe_allow_html=True)
+                    st.markdown(f"<div class='card card-gold'><b>{term}</b><br><small>{definition}</small></div>", unsafe_allow_html=True)
 
         st.markdown("---")
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("Take Quiz on This Topic →", type="primary"):
+            if st.button("Take the Quiz! ❓", use_container_width=True):
                 st.session_state.page = "Quiz"
                 st.rerun()
         with col2:
-            if st.button("Try a Scenario →"):
+            if st.button("Solve a Scenario! 🎯", use_container_width=True):
                 st.session_state.page = "Scenarios"
                 st.rerun()
 
 # ── QUIZ ──────────────────────────────────────
 elif page == "Quiz":
-    st.markdown(f"## ❓ Quiz — {level}")
-    st.markdown(f"Topic filter: **{topic}** | Change topic in the sidebar to focus.")
+    st.markdown(f"## ❓ Brain Tickler — {level}")
+    st.markdown(f"Focusing on: **{topic}**")
 
     questions = QUIZ_QUESTIONS.get(level, [])
     if not questions:
@@ -1341,11 +1414,12 @@ elif page == "Quiz":
 
         for idx, q_data in enumerate(selected_qs):
             q_key = f"{level}_{idx}_{str(date.today())}"
-            st.markdown(f"---\n**Q{idx+1}: {q_data['q']}**")
+            st.markdown(f"#### Q{idx+1}: {q_data['q']}")
 
             answered = st.session_state.quiz_answered.get(q_key)
 
             if answered is None:
+                # Options as rounded buttons
                 for opt in q_data['options']:
                     letter = opt[0]
                     if st.button(opt, key=f"q_{q_key}_{letter}"):
@@ -1361,250 +1435,100 @@ elif page == "Quiz":
             else:
                 chosen = answered['chosen']
                 correct = answered['correct']
-                for opt in q_data['options']:
-                    letter = opt[0]
-                    if letter == q_data['answer']:
-                        st.markdown(f"✅ **{opt}**")
-                    elif letter == chosen and not correct:
-                        st.markdown(f"❌ ~~{opt}~~")
-                    else:
-                        st.markdown(f"&nbsp;&nbsp;&nbsp;{opt}")
-
                 if correct:
-                    st.markdown(f"<div class='card card-green'>✅ Correct! +15 XP<br><small>{q_data['explanation']}</small></div>", unsafe_allow_html=True)
+                    st.markdown(f"<div class='card card-green'>✅ **Brilliant!**<br>{q_data['explanation']}</div>", unsafe_allow_html=True)
                 else:
-                    st.markdown(f"<div class='card card-red'>❌ The answer was **{q_data['answer']}**.<br><small>{q_data['explanation']}</small></div>", unsafe_allow_html=True)
+                    st.markdown(f"<div class='card card-red'>❌ **Not quite!** The answer was <b>{q_data['answer']}</b>.<br>{q_data['explanation']}</div>", unsafe_allow_html=True)
 
         answered_today = sum(1 for k in st.session_state.quiz_answered if str(date.today()) in k and level in k)
-        total_today = len(selected_qs)
-
-        st.markdown("---")
-        st.markdown(f"**Progress today**: {answered_today}/{total_today} questions answered")
-
-        if answered_today >= total_today:
-            correct_today = sum(1 for k, v in st.session_state.quiz_answered.items() if str(date.today()) in k and level in k and v['correct'])
-            pct = int(correct_today / total_today * 100)
-            if pct == 100:
-                st.balloons()
-                st.success(f"🎉 Perfect score! {correct_today}/{total_today} — you're crushing it!")
-            elif pct >= 60:
-                st.success(f"Good work! {correct_today}/{total_today} correct ({pct}%)")
-            else:
-                st.warning(f"{correct_today}/{total_today} correct ({pct}%). Review the lessons and try again tomorrow!")
-
-            if st.button("Try Different Level"):
-                st.session_state.quiz_answered = {}
+        if answered_today >= len(selected_qs):
+            st.balloons()
+            st.success("You finished today's quiz! Great job.")
+            if st.button("Try another topic"):
+                st.session_state.page = "Home"
                 st.rerun()
 
 # ── SCENARIOS ─────────────────────────────────
 elif page == "Scenarios":
-    st.markdown(f"## 🎯 Scenario Exercises — {level}")
-    st.markdown("Apply your knowledge to real-world situations. Think it through before revealing the answer.")
-
+    st.markdown(f"## 🎯 Real World Puzzles — {level}")
+    
     scenarios = SCENARIO_EXERCISES.get(level, [])
-    if not scenarios:
-        st.info("No scenario exercises for this level yet. Try Beginner or Intermediate!")
-    else:
-        for i, s in enumerate(scenarios):
-            st.markdown(f"---")
-            st.markdown(f"### {s['scenario']}")
-            st.markdown(f"<div class='card'>{s['situation']}</div>", unsafe_allow_html=True)
-            st.markdown(f"**❓ {s['question']}**")
+    for i, s in enumerate(scenarios):
+        st.markdown(f"### {s['scenario']}")
+        st.markdown(f"<div class='card card-blue'>{s['situation']}</div>", unsafe_allow_html=True)
+        st.markdown(f"**Question:** {s['question']}")
 
-            reveal_key = f"scenario_reveal_{level}_{i}"
-            if reveal_key not in st.session_state:
-                st.session_state[reveal_key] = False
-
-            if not st.session_state[reveal_key]:
-                col1, col2 = st.columns([1, 4])
-                with col1:
-                    if st.button("Reveal Answer", key=f"reveal_{level}_{i}"):
-                        st.session_state[reveal_key] = True
-                        award_xp(5, "Scenario completed")
-                        st.rerun()
-            else:
-                st.markdown(f"<div class='card card-green'><b>Answer & Analysis:</b><br><br>{s['answer']}</div>", unsafe_allow_html=True)
-                st.markdown(f"<div class='card card-gold'>💡 <b>Key Concept:</b> {s['key_concept']}</div>", unsafe_allow_html=True)
-
-        st.markdown("---")
-        other_levels = [l for l in LEVELS if l != level]
-        st.markdown(f"Try scenarios at other levels: " + " | ".join(other_levels))
+        reveal_key = f"scenario_reveal_{level}_{i}"
+        if not st.session_state.get(reveal_key):
+            if st.button("See Analysis ✨", key=f"reveal_{level}_{i}"):
+                st.session_state[reveal_key] = True
+                award_xp(5, "Scenario completed")
+                st.rerun()
+        else:
+            st.markdown(f"<div class='card card-green'><b>Expert View:</b><br>{s['answer']}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='card card-gold'>💡 <b>Big Concept:</b> {s['key_concept']}</div>", unsafe_allow_html=True)
 
 # ── FILL IN THE BLANKS ────────────────────────
 elif page == "Fill in the Blanks":
-    st.markdown(f"## ✍️ Fill in the Blanks — {level}")
-    st.markdown("Complete the economic statement with the correct term.")
+    st.markdown(f"## ✍️ Word Detective — {level}")
 
     level_qs = [q for q in FILL_IN_BLANKS if q['level'] == level]
-    if not level_qs:
-        st.info(f"No fill-in-the-blank exercises for {level} yet.")
-    else:
-        for i, q in enumerate(level_qs):
-            st.markdown(f"---")
-            st.markdown(f"**{i+1}. {q['sentence']}**")
-
-            fib_key = f"fib_{level}_{i}"
-            submitted_key = f"fib_sub_{level}_{i}"
-
-            if submitted_key not in st.session_state:
-                st.session_state[submitted_key] = None
-
-            if st.session_state[submitted_key] is None:
-                user_ans = st.text_input("Your answer:", key=fib_key, label_visibility="collapsed", placeholder="Type your answer here...")
-                col1, col2 = st.columns([1, 4])
-                with col1:
-                    if st.button("Check", key=f"fib_check_{level}_{i}"):
-                        st.session_state[submitted_key] = user_ans
-                        st.session_state.total_answered += 1
-                        correct_words = q['answer'].lower().split()
-                        user_words = user_ans.lower().split()
-                        overlap = sum(1 for w in user_words if any(w in cw or cw in w for cw in correct_words))
-                        if overlap >= min(2, len(correct_words)):
-                            st.session_state.correct_answered += 1
-                            award_xp(10, "Fill-in correct")
-                        else:
-                            award_xp(2, "Fill-in attempt")
-                        st.rerun()
-                with col2:
-                    st.caption(f"💡 Hint: {q['hint']}")
-            else:
-                user_ans = st.session_state[submitted_key]
-                correct_words = q['answer'].lower().split()
-                user_words = user_ans.lower().split() if user_ans else []
-                overlap = sum(1 for w in user_words if any(w in cw or cw in w for cw in correct_words))
-                correct = overlap >= min(2, len(correct_words))
-
-                if correct:
-                    st.markdown(f"<div class='card card-green'>✅ Correct! Answer: <b>{q['answer']}</b></div>", unsafe_allow_html=True)
-                else:
-                    st.markdown(f"<div class='card card-red'>❌ Your answer: '{user_ans}' | Correct: <b>{q['answer']}</b></div>", unsafe_allow_html=True)
-
-        if st.button("Reset and try again"):
-            for i in range(len(level_qs)):
-                submitted_key = f"fib_sub_{level}_{i}"
-                if submitted_key in st.session_state:
-                    del st.session_state[submitted_key]
-            st.rerun()
+    for i, q in enumerate(level_qs):
+        st.markdown(f"**{i+1}. {q['sentence']}**")
+        submitted_key = f"fib_sub_{level}_{i}"
+        
+        if st.session_state.get(submitted_key) is None:
+            user_ans = st.text_input("Fill the gap...", key=f"fib_input_{level}_{i}")
+            if st.button("Check! ✨", key=f"fib_btn_{level}_{i}"):
+                st.session_state[submitted_key] = user_ans
+                st.rerun()
+            st.caption(f"💡 Hint: {q['hint']}")
+        else:
+            st.markdown(f"<div class='card card-gold'>The correct word was: <b>{q['answer']}</b></div>", unsafe_allow_html=True)
 
 # ── CONCEPT CHAINS ────────────────────────────
 elif page == "Concept Chains":
-    st.markdown("## 🔗 Concept Chains")
-    st.markdown("Understand how economic forces cascade through the system.")
-
+    st.markdown("## 🔗 Domino Effects")
     for chain in CONCEPT_CONNECTIONS:
-        if chain['level'] == level or True:  # show all chains
-            chain_level = chain['level']
-            st.markdown(f"---")
-            st.markdown(f"### {chain['title']}")
-            st.markdown(f"<span class='level-badge {chain_level.lower()}'>{chain_level}</span>", unsafe_allow_html=True)
-            st.markdown(f"*{chain['description']}*")
-
-            st.markdown("<br>", unsafe_allow_html=True)
-            chain_html = ""
-            for j, concept in enumerate(chain['concepts']):
-                chain_html += f"<span class='concept-box'>{concept}</span>"
-                if j < len(chain['concepts']) - 1:
-                    chain_html += "<span class='chain-arrow'> → </span>"
-            st.markdown(chain_html, unsafe_allow_html=True)
-            st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown(f"<div class='card card-blue'><b>{chain['title']}</b><br><small>{chain['description']}</small></div>", unsafe_allow_html=True)
+        
+        chain_html = ""
+        for j, concept in enumerate(chain['concepts']):
+            chain_html += f"<span class='concept-box'>{concept}</span>"
+            if j < len(chain['concepts']) - 1:
+                chain_html += " ➔ "
+        st.markdown(f"<div style='text-align:center; padding:1rem;'>{chain_html}</div>", unsafe_allow_html=True)
 
 # ── ECONOMIC HISTORY ──────────────────────────
 elif page == "Economic History":
-    st.markdown("## 🏛️ Economic History")
-    st.markdown("The biggest events that shaped the global economy — and the lessons they teach.")
-
-    tab1, tab2 = st.tabs(["📜 Timeline", "🔍 Deep Dive"])
-
-    with tab1:
-        search = st.text_input("🔍 Search events (keyword, year, era):", placeholder="e.g., Great Depression, 2008, Keynesian")
-
-        filtered = ECONOMIC_HISTORY
-        if search:
-            q = search.lower()
-            filtered = [e for e in ECONOMIC_HISTORY if q in e['year'].lower() or q in e['event'].lower() or q in e['description'].lower() or q in e['era'].lower() or q in e['lesson'].lower()]
-
-        for event in filtered:
-            with st.expander(f"**{event['year']}** — {event['event']} | *{event['era']}*"):
-                st.markdown(event['description'])
-                st.markdown(f"<div class='card card-gold'>💡 <b>Lesson:</b> {event['lesson']}</div>", unsafe_allow_html=True)
-                st.markdown(f"<span class='era-tag'>{event['era']}</span>", unsafe_allow_html=True)
-
-    with tab2:
-        era_list = sorted(set(e['era'] for e in ECONOMIC_HISTORY))
-        selected_era = st.selectbox("Filter by era:", ["All"] + era_list)
-
-        era_events = ECONOMIC_HISTORY if selected_era == "All" else [e for e in ECONOMIC_HISTORY if e['era'] == selected_era]
-
-        st.markdown(f"**{len(era_events)} events** in this era")
-
-        for event in era_events:
-            st.markdown(f"""
-<div class='history-card'>
-    <div style='display:flex;justify-content:space-between;align-items:center;'>
-        <b style='font-size:1.1rem;'>{event['event']}</b>
-        <span class='era-tag'>{event['era']}</span>
-    </div>
-    <p style='color:#444 !important;margin:4px 0 8px 0;'>📅 {event['year']}</p>
-    <p>{event['description']}</p>
-    <div class='card card-gold' style='margin-top:8px;'>💡 {event['lesson']}</div>
-</div>
-""", unsafe_allow_html=True)
+    st.markdown("## 🏛️ Time Machine")
+    for event in ECONOMIC_HISTORY:
+        with st.expander(f"🕰️ {event['year']} — {event['event']}"):
+            st.markdown(f"<div class='card'>{event['description']}</div>", unsafe_allow_html=True)
+            st.markdown(f"<span class='era-tag'>{event['era']}</span>", unsafe_allow_html=True)
+            st.markdown(f"<div class='card card-gold'>💡 <b>Why it matters:</b> {event['lesson']}</div>", unsafe_allow_html=True)
 
 # ── MY PROGRESS ───────────────────────────────
 elif page == "My Progress":
-    st.markdown("## 📊 My Progress")
+    st.markdown("## 📊 My Sticker Book")
+    
+    # Progress Cards
+    c1, c2 = st.columns(2)
+    with c1:
+        st.markdown(f"<div class='card' style='text-align:center;'><h3>✨ {st.session_state.xp} XP</h3>Total experience gained</div>", unsafe_allow_html=True)
+    with c2:
+        st.markdown(f"<div class='card' style='text-align:center;'><h3>🔥 {st.session_state.streak} Days</h3>Current learning streak</div>", unsafe_allow_html=True)
 
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.metric("Total XP", st.session_state.xp)
-    with col2:
-        total = st.session_state.total_answered
-        correct = st.session_state.correct_answered
-        acc = f"{int(correct/total*100)}%" if total else "N/A"
-        st.metric("Quiz Accuracy", acc)
-    with col3:
-        st.metric("Questions Answered", total)
-    with col4:
-        st.metric("Streak", f"{st.session_state.streak} days")
-
-    st.markdown("---")
-    st.markdown("### Badges Earned")
+    st.markdown("### 🏅 Badges Earned")
     if st.session_state.badges:
-        badge_cols = st.columns(len(st.session_state.badges))
-        for col, badge in zip(badge_cols, st.session_state.badges):
-            with col:
-                icon = BADGE_ICONS.get(badge, "🏅")
-                st.markdown(f"<div style='text-align:center;padding:1rem;background:#fff8e1;border-radius:10px;color:#111 !important;'><div style='font-size:2rem;'>{icon}</div><b style='color:#111 !important;'>{badge}</b></div>", unsafe_allow_html=True)
+        b_cols = st.columns(4)
+        for i, b in enumerate(st.session_state.badges):
+            with b_cols[i % 4]:
+                icon = BADGE_ICONS.get(b, "🏅")
+                st.markdown(f"<div class='card card-gold' style='text-align:center; font-size:1.5rem;'>{icon}<br><small style='font-size:0.8rem;'>{b}</small></div>", unsafe_allow_html=True)
     else:
-        st.info("No badges yet. Complete lessons and quizzes to earn them!")
+        st.info("Complete your first quiz to earn a badge!")
 
-    st.markdown("---")
-    st.markdown("### How to Earn XP")
-    xp_table = [
-        ("Start a daily lesson", "+10 XP"),
-        ("Correct quiz answer", "+15 XP"),
-        ("Quiz attempt (wrong)", "+2 XP"),
-        ("Complete scenario", "+5 XP"),
-        ("Fill-in correct", "+10 XP"),
-        ("Fill-in attempt", "+2 XP"),
-    ]
-    for action, reward in xp_table:
-        st.markdown(f"- **{action}**: {reward}")
-
-    st.markdown("---")
-    st.markdown("### Lesson Coverage")
-    topics_with_lessons = list(LESSONS.keys())
-    for t in topics_with_lessons:
-        levels_available = list(LESSONS[t].keys())
-        icon = TOPICS.get(t, "📚")
-        st.markdown(f"{icon} **{t}**: " + " | ".join([f"<span class='level-badge {l.lower()}'>{l}</span>" for l in levels_available]), unsafe_allow_html=True)
-
-    st.markdown("---")
-    if st.button("Reset All Progress", type="secondary"):
-        for key in ["score", "total_answered", "correct_answered", "streak", "daily_done", "quiz_answered", "fill_answers", "xp", "badges"]:
-            if key in ["daily_done", "quiz_answered", "fill_answers", "badges"]:
-                st.session_state[key] = set() if key == "daily_done" else ({} if key != "badges" else [])
-            else:
-                st.session_state[key] = 0
-        st.success("Progress reset.")
+    if st.button("Reset My Journey", type="secondary"):
+        st.session_state.clear()
         st.rerun()
