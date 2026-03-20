@@ -763,90 +763,163 @@ def award_xp(amount):
 BADGE_ICONS = {"First 100 XP": "🥉", "500 XP Club": "🥇", "Quiz Starter": "📝", "Quiz Master": "🎓", "3-Day Streak": "🔥"}
 
 # ─────────────────────────────────────────────
-# CSS — THEME AWARE
+# THEME PALETTES
 # ─────────────────────────────────────────────
-def render_css(dark: bool):
+def get_theme(dark: bool) -> dict:
     if dark:
-        BG       = "#1a2b1a"
-        BLOCK    = "#1a2b1a"
-        TEXT     = "#FDF6E3"
-        CARD     = "#2a3d2a"
-        CARD_B   = "#52b788"
-        CARD_SH  = "#0d1f14"
-        SIDEBAR  = "#0d1f14"
-        SB_B     = "#1b4332"
-        TILE     = "#2a3d2a"
-        TILE_B   = "#52b788"
-        TILE_SH  = "#0d1f14"
-        HIST     = "#243524"
-        INP_BG   = "#2a3d2a"
-        EXP_BG   = "#2a3d2a"
-        METRIC   = "#2a3d2a"
-        SUB_COL  = "#52b788"
-        SEL_BG   = "#2a3d2a"
-        SEL_TEXT = "#FDF6E3"
-        SEL_MENU = "#2a3d2a"
-        SEL_OPT  = "#FDF6E3"
-        SEL_OPT_H= "#1b4332"
+        # ── Dark: deep purple-night (Palette 12 + 11) ──
+        return dict(
+            BG        = "#1e1c2e",
+            TEXT      = "#e3e1c8",
+            CARD      = "#514d86",
+            CARD_B    = "#816cb1",
+            CARD_SH   = "#16142a",
+            SIDEBAR   = "#16142a",
+            SB_B      = "#514d86",
+            TILE      = "#514d86",
+            TILE_B    = "#816cb1",
+            TILE_SH   = "#16142a",
+            HIST      = "#2a2840",
+            INP_BG    = "#514d86",
+            EXP_BG    = "#514d86",
+            METRIC    = "#514d86",
+            SUB_COL   = "#c5c5ff",
+            SEL_BG    = "#514d86",
+            SEL_TEXT  = "#e3e1c8",
+            SEL_MENU  = "#2a2840",
+            SEL_OPT   = "#e3e1c8",
+            SEL_OPT_H = "#514d86",
+            SB_SEL    = "#2a2840",
+            SB_SEL_B  = "#816cb1",
+            SB_MENU   = "#1e1c2e",
+            SB_MENU_H = "#2a2840",
+            BTN_BG    = "#d289ae",
+            BTN_SH    = "#8a4a6e",
+            BTN_TXT   = "#16142a",
+            SB_BTN    = "#816cb1",
+            SB_BTN_SH = "#514d86",
+            TITLE_COL = "#e2d6fa",
+            TITLE_SH  = "#816cb1",
+            ACCENT_H3 = "#c5c5ff",
+            ACCENT_HAS= "#c5c5ff",
+            ACCENT_NO = "#816cb1",
+            XP_BG     = "#16142a",
+            XP_FILL   = "#d289ae",
+            XP_BORDER = "#816cb1",
+            BADGE_BEG = "#816cb1",
+            BADGE_INT = "#d289ae",
+            BADGE_ADV = "#a2aef7",
+            CHAIN_ARR = "#d289ae",
+            ERA_BG    = "#514d86",
+            CBOX_BG   = "#2a2840",
+            CBOX_B    = "#816cb1",
+            CG_BG     = "#1e2e3a",
+            CG_B      = "#6aa08f",
+            CG_SH     = "#0e1820",
+            CR_BG     = "#3a1e2a",
+            CR_B      = "#d289ae",
+            CR_SH     = "#1e0e18",
+            CGOLD_BG  = "#2e2810",
+            CGOLD_B   = "#e8ae7d",
+            CGOLD_SH  = "#1e1808",
+            TOGGLE_SH = "#514d86",
+        )
     else:
-        BG       = "#FDF6E3"
-        BLOCK    = "#FDF6E3"
-        TEXT     = "#2D1B1E"
-        CARD     = "#D3DC92"
-        CARD_B   = "#A4BD84"
-        CARD_SH  = "#B17C82"
-        SIDEBAR  = "#1b4332"
-        SB_B     = "#52b788"
-        TILE     = "#D3DC92"
-        TILE_B   = "#A4BD84"
-        TILE_SH  = "#B17C82"
-        HIST     = "#FDF6E3"
-        INP_BG   = "#FDF6E3"
-        EXP_BG   = "#D3DC92"
-        METRIC   = "#D3DC92"
-        SUB_COL  = "#1b4332"
-        SEL_BG   = "#FDF6E3"
-        SEL_TEXT = "#2D1B1E"
-        SEL_MENU = "#FDF6E3"
-        SEL_OPT  = "#2D1B1E"
-        SEL_OPT_H= "#D3DC92"
+        # ── Light: warm sage-peach (Palette 6 + 4 + 5) ──
+        return dict(
+            BG        = "#f9f6e3",
+            TEXT      = "#2d2020",
+            CARD      = "#dbe8cd",
+            CARD_B    = "#b8c4a4",
+            CARD_SH   = "#8b82a8",
+            SIDEBAR   = "#6aa08f",
+            SB_B      = "#b8c4a4",
+            TILE      = "#dbe8cd",
+            TILE_B    = "#b8c4a4",
+            TILE_SH   = "#8b82a8",
+            HIST      = "#f9f6e3",
+            INP_BG    = "#f9f6e3",
+            EXP_BG    = "#dbe8cd",
+            METRIC    = "#dbe8cd",
+            SUB_COL   = "#6aa08f",
+            SEL_BG    = "#f9f6e3",
+            SEL_TEXT  = "#2d2020",
+            SEL_MENU  = "#f9f6e3",
+            SEL_OPT   = "#2d2020",
+            SEL_OPT_H = "#dbe8cd",
+            SB_SEL    = "#4a7a6e",
+            SB_SEL_B  = "#b8c4a4",
+            SB_MENU   = "#4a7a6e",
+            SB_MENU_H = "#6aa08f",
+            BTN_BG    = "#e8ae7d",
+            BTN_SH    = "#a56066",
+            BTN_TXT   = "#2d2020",
+            SB_BTN    = "#4a7a6e",
+            SB_BTN_SH = "#2d5548",
+            TITLE_COL = "#7f4a4f",
+            TITLE_SH  = "#b8c4a4",
+            ACCENT_H3 = "#6aa08f",
+            ACCENT_HAS= "#6aa08f",
+            ACCENT_NO = "#8b82a8",
+            XP_BG     = "#4a7a6e",
+            XP_FILL   = "#e8ae7d",
+            XP_BORDER = "#b8c4a4",
+            BADGE_BEG = "#6aa08f",
+            BADGE_INT = "#e8ae7d",
+            BADGE_ADV = "#7f4a4f",
+            CHAIN_ARR = "#7f4a4f",
+            ERA_BG    = "#6aa08f",
+            CBOX_BG   = "#fff6ae",
+            CBOX_B    = "#e8ae7d",
+            CG_BG     = "#b8c4a4",
+            CG_B      = "#6aa08f",
+            CG_SH     = "#4a7a6e",
+            CR_BG     = "#ffd9bc",
+            CR_B      = "#a56066",
+            CR_SH     = "#7f4a4f",
+            CGOLD_BG  = "#fff6ae",
+            CGOLD_B   = "#e8ae7d",
+            CGOLD_SH  = "#a56066",
+            TOGGLE_SH = "#4a7a6e",
+        )
 
+def render_css(T: dict):
     st.markdown(f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap');
 
     html, body, .stApp, [class*="appview-container"] {{
         font-family: 'Nunito', sans-serif !important;
-        background-color: {BG} !important;
-        color: {TEXT} !important;
+        background-color: {T['BG']} !important;
+        color: {T['TEXT']} !important;
     }}
     .main .block-container {{
-        background-color: {BLOCK} !important;
+        background-color: {T['BG']} !important;
         padding-top: 2rem !important;
     }}
     p, span, label, li, h1, h2, h3, h4, strong, em {{
-        color: {TEXT} !important;
+        color: {T['TEXT']} !important;
     }}
 
     /* ── SIDEBAR ── */
     section[data-testid="stSidebar"] {{
-        background-color: {SIDEBAR} !important;
-        border-right: 4px solid #52b788 !important;
+        background-color: {T['SIDEBAR']} !important;
+        border-right: 4px solid {T['SB_B']} !important;
     }}
-    section[data-testid="stSidebar"] * {{ color: #FDF6E3 !important; }}
-    section[data-testid="stSidebar"] hr {{ border-color: #52b788 !important; opacity: 0.5; }}
+    section[data-testid="stSidebar"] * {{ color: #f9f6e3 !important; }}
+    section[data-testid="stSidebar"] hr {{ border-color: {T['SB_B']} !important; opacity: 0.5; }}
 
     /* ── BUTTONS (main) ── */
     .stButton > button {{
         font-family: 'Nunito', sans-serif !important;
         font-weight: 800 !important;
         font-size: 0.95rem !important;
-        color: #2D1B1E !important;
-        background-color: #FCAB92 !important;
+        color: {T['BTN_TXT']} !important;
+        background-color: {T['BTN_BG']} !important;
         border: none !important;
         border-radius: 20px !important;
         padding: 0.6rem 1rem !important;
-        box-shadow: 0px 5px 0px #c47d68 !important;
+        box-shadow: 0px 5px 0px {T['BTN_SH']} !important;
         transition: transform 0.1s, box-shadow 0.1s !important;
         width: 100% !important;
         line-height: 1.3 !important;
@@ -861,7 +934,7 @@ def render_css(dark: bool):
     }}
     .stButton > button p,
     .stButton > button span {{
-        color: #2D1B1E !important;
+        color: {T['BTN_TXT']} !important;
         font-weight: 800 !important;
         background: transparent !important;
         border: none !important;
@@ -875,7 +948,7 @@ def render_css(dark: bool):
     .stButton > button [class*="shortcut"] {{ display: none !important; }}
     .stButton > button:hover {{
         transform: translateY(3px) !important;
-        box-shadow: 0px 2px 0px #c47d68 !important;
+        box-shadow: 0px 2px 0px {T['BTN_SH']} !important;
     }}
     .stButton > button:active {{
         transform: translateY(5px) !important;
@@ -884,182 +957,190 @@ def render_css(dark: bool):
 
     /* ── SIDEBAR BUTTONS ── */
     section[data-testid="stSidebar"] .stButton > button {{
-        background-color: #52b788 !important;
-        box-shadow: 0px 5px 0px #2d6a4f !important;
-        color: #fff !important;
+        background-color: {T['SB_BTN']} !important;
+        box-shadow: 0px 5px 0px {T['SB_BTN_SH']} !important;
+        color: #f9f6e3 !important;
         margin-bottom: 5px !important;
     }}
     section[data-testid="stSidebar"] .stButton > button p,
-    section[data-testid="stSidebar"] .stButton > button span {{ color: #fff !important; }}
+    section[data-testid="stSidebar"] .stButton > button span {{ color: #f9f6e3 !important; }}
     section[data-testid="stSidebar"] .stButton > button:hover {{
-        box-shadow: 0px 2px 0px #2d6a4f !important;
+        box-shadow: 0px 2px 0px {T['SB_BTN_SH']} !important;
     }}
 
-    /* ── SELECTBOX FIX ── */
+    /* ── DARK MODE TOGGLE (circle) ── */
+    div[data-testid="stSidebar"] div[data-testid="column"]:last-child .stButton > button {{
+        min-height: unset !important;
+        height: 36px !important;
+        width: 36px !important;
+        padding: 0 !important;
+        border-radius: 50% !important;
+        font-size: 1.1rem !important;
+        box-shadow: 0px 3px 0px {T['TOGGLE_SH']} !important;
+        margin-top: 2px;
+    }}
+    div[data-testid="stSidebar"] div[data-testid="column"]:last-child .stButton > button:hover {{
+        box-shadow: 0px 1px 0px {T['TOGGLE_SH']} !important;
+    }}
+
+    /* ── SELECTBOX ── */
     [data-testid="stSelectbox"] > div > div,
     [data-baseweb="select"] > div,
     [data-baseweb="select"] {{
-        background-color: {SEL_BG} !important;
-        color: {SEL_TEXT} !important;
-        border: 3px solid {CARD_B} !important;
+        background-color: {T['SEL_BG']} !important;
+        color: {T['SEL_TEXT']} !important;
+        border: 3px solid {T['CARD_B']} !important;
         border-radius: 14px !important;
     }}
-    [data-baseweb="select"] * {{ color: {SEL_TEXT} !important; }}
-    [data-baseweb="select"] svg {{ fill: {SEL_TEXT} !important; color: {SEL_TEXT} !important; }}
+    [data-baseweb="select"] * {{ color: {T['SEL_TEXT']} !important; }}
+    [data-baseweb="select"] svg {{ fill: {T['SEL_TEXT']} !important; }}
     [data-baseweb="popover"] [role="listbox"],
     [data-baseweb="menu"] {{
-        background-color: {SEL_MENU} !important;
-        border: 2px solid {CARD_B} !important;
+        background-color: {T['SEL_MENU']} !important;
+        border: 2px solid {T['CARD_B']} !important;
         border-radius: 12px !important;
     }}
     [data-baseweb="menu"] li,
     [data-baseweb="menu"] [role="option"] {{
-        background-color: {SEL_MENU} !important;
-        color: {SEL_OPT} !important;
+        background-color: {T['SEL_MENU']} !important;
+        color: {T['SEL_OPT']} !important;
         font-weight: 700 !important;
     }}
     [data-baseweb="menu"] li:hover,
     [data-baseweb="menu"] [role="option"]:hover,
     [data-baseweb="menu"] [aria-selected="true"] {{
-        background-color: {SEL_OPT_H} !important;
-        color: {SEL_OPT} !important;
+        background-color: {T['SEL_OPT_H']} !important;
     }}
     section[data-testid="stSidebar"] [data-baseweb="select"] > div,
     section[data-testid="stSidebar"] [data-baseweb="select"] {{
-        background-color: #2d6a4f !important;
-        border-color: #52b788 !important;
+        background-color: {T['SB_SEL']} !important;
+        border-color: {T['SB_SEL_B']} !important;
     }}
-    section[data-testid="stSidebar"] [data-baseweb="select"] * {{ color: #FDF6E3 !important; }}
-    section[data-testid="stSidebar"] [data-baseweb="select"] svg {{ fill: #FDF6E3 !important; }}
-    section[data-testid="stSidebar"] [data-baseweb="menu"] {{
-        background-color: #1b4332 !important;
-    }}
-    section[data-testid="stSidebar"] [data-baseweb="menu"] li {{ color: #FDF6E3 !important; }}
-    section[data-testid="stSidebar"] [data-baseweb="menu"] li:hover {{ background-color: #2d6a4f !important; }}
+    section[data-testid="stSidebar"] [data-baseweb="select"] * {{ color: #f9f6e3 !important; }}
+    section[data-testid="stSidebar"] [data-baseweb="select"] svg {{ fill: #f9f6e3 !important; }}
+    section[data-testid="stSidebar"] [data-baseweb="menu"] {{ background-color: {T['SB_MENU']} !important; }}
+    section[data-testid="stSidebar"] [data-baseweb="menu"] li {{ color: #f9f6e3 !important; }}
+    section[data-testid="stSidebar"] [data-baseweb="menu"] li:hover {{ background-color: {T['SB_MENU_H']} !important; }}
 
     /* ── CARDS ── */
     .card {{
-        background: {CARD} !important;
+        background: {T['CARD']} !important;
         border-radius: 20px !important;
         padding: 1.2rem 1.5rem !important;
         margin-bottom: 1rem !important;
-        border: 4px solid {CARD_B} !important;
-        box-shadow: 6px 6px 0px {CARD_SH} !important;
-        color: {TEXT} !important;
+        border: 4px solid {T['CARD_B']} !important;
+        box-shadow: 6px 6px 0px {T['CARD_SH']} !important;
+        color: {T['TEXT']} !important;
     }}
-    .card * {{ color: {TEXT} !important; }}
-    .card-green {{ background: #2d5a3d !important; border-color: #52b788 !important; box-shadow: 6px 6px 0px #0d1f14 !important; }}
-    .card-red   {{ background: #5a3020 !important; border-color: #e76f51 !important; box-shadow: 6px 6px 0px #3a1a10 !important; }}
-    .card-gold  {{ background: #5a4a10 !important; border-color: #f4a261 !important; box-shadow: 6px 6px 0px #3a2e08 !important; }}
-    {"" if dark else """
-    .card-green { background: #b7e4c7 !important; border-color: #52b788 !important; box-shadow: 6px 6px 0px #2d6a4f !important; }
-    .card-red   { background: #fec89a !important; border-color: #e76f51 !important; box-shadow: 6px 6px 0px #c47d68 !important; }
-    .card-gold  { background: #ffe8a3 !important; border-color: #f4a261 !important; box-shadow: 6px 6px 0px #e76f51 !important; }
-    """}
+    .card * {{ color: {T['TEXT']} !important; }}
+    .card-green {{ background: {T['CG_BG']} !important; border-color: {T['CG_B']} !important; box-shadow: 6px 6px 0px {T['CG_SH']} !important; }}
+    .card-red   {{ background: {T['CR_BG']} !important; border-color: {T['CR_B']} !important; box-shadow: 6px 6px 0px {T['CR_SH']} !important; }}
+    .card-gold  {{ background: {T['CGOLD_BG']} !important; border-color: {T['CGOLD_B']} !important; box-shadow: 6px 6px 0px {T['CGOLD_SH']} !important; }}
 
     /* ── TITLES ── */
     .main-title {{
         font-size: 3rem; font-weight: 800;
-        color: #B17C82 !important;
-        text-shadow: 3px 3px 0px #A4BD84;
+        color: {T['TITLE_COL']} !important;
+        text-shadow: 3px 3px 0px {T['TITLE_SH']};
         text-align: center; margin-bottom: 0.2rem;
     }}
     .subtitle {{
-        color: {SUB_COL} !important;
+        color: {T['SUB_COL']} !important;
         font-size: 1.2rem; font-weight: 800;
         text-align: center; margin-bottom: 2rem;
     }}
+    .accent-h3 {{ color: {T['ACCENT_H3']} !important; }}
 
     /* ── XP BAR ── */
     .xp-bar {{
-        background: #0d1f14; border-radius: 50px; height: 18px;
-        border: 3px solid #52b788; overflow: hidden; margin: 6px 0 12px 0;
+        background: {T['XP_BG']}; border-radius: 50px; height: 18px;
+        border: 3px solid {T['XP_BORDER']}; overflow: hidden; margin: 6px 0 12px 0;
     }}
-    .xp-fill {{ background: #FCAB92; height: 100%; border-radius: 50px; }}
+    .xp-fill {{ background: {T['XP_FILL']}; height: 100%; border-radius: 50px; }}
 
     /* ── LEVEL BADGES ── */
     .level-badge {{
         display: inline-block; padding: 4px 14px;
         border-radius: 20px; font-size: 0.85rem; font-weight: 800; color: #fff !important;
     }}
-    .beginner     {{ background: #52b788 !important; }}
-    .intermediate {{ background: #f4a261 !important; }}
-    .advanced     {{ background: #B17C82 !important; }}
+    .beginner     {{ background: {T['BADGE_BEG']} !important; }}
+    .intermediate {{ background: {T['BADGE_INT']} !important; }}
+    .advanced     {{ background: {T['BADGE_ADV']} !important; }}
 
     /* ── METRICS ── */
     [data-testid="metric-container"] {{
-        background: {METRIC} !important;
+        background: {T['METRIC']} !important;
         border-radius: 16px !important; padding: 0.8rem !important;
-        border: 3px solid {CARD_B} !important;
-        box-shadow: 5px 5px 0px {CARD_SH} !important;
+        border: 3px solid {T['CARD_B']} !important;
+        box-shadow: 5px 5px 0px {T['CARD_SH']} !important;
     }}
     [data-testid="metric-container"] label,
-    [data-testid="metric-container"] div {{ color: {TEXT} !important; font-weight: 800 !important; }}
+    [data-testid="metric-container"] div {{ color: {T['TEXT']} !important; font-weight: 800 !important; }}
 
     /* ── TOPIC TILES ── */
     .topic-tile {{
-        background: {TILE}; border: 3px solid {TILE_B}; border-radius: 14px;
+        background: {T['TILE']}; border: 3px solid {T['TILE_B']}; border-radius: 14px;
         padding: 10px 4px 6px 4px; text-align: center;
-        color: {TEXT} !important; font-weight: 800; font-size: 0.8rem;
-        box-shadow: 4px 4px 0px {TILE_SH}; margin-bottom: 4px; line-height: 1.4;
+        color: {T['TEXT']} !important; font-weight: 800; font-size: 0.8rem;
+        box-shadow: 4px 4px 0px {T['TILE_SH']}; margin-bottom: 4px; line-height: 1.4;
     }}
 
     /* ── CONCEPT CHAIN ── */
     .concept-box {{
-        background: {"#3a4a1a" if dark else "#ffe8a3"} !important;
-        border: 2px solid {"#A4BD84" if dark else "#f4a261"};
+        background: {T['CBOX_BG']} !important;
+        border: 2px solid {T['CBOX_B']};
         border-radius: 10px; padding: 6px 12px; margin: 3px;
         display: inline-block; font-weight: 700;
-        color: {TEXT} !important; font-size: 0.88rem;
+        color: {T['TEXT']} !important; font-size: 0.88rem;
     }}
-    .chain-arrow {{ font-size: 1.3rem; color: #B17C82 !important; margin: 2px; }}
+    .chain-arrow {{ font-size: 1.3rem; color: {T['CHAIN_ARR']} !important; margin: 2px; }}
 
     /* ── HISTORY CARDS ── */
     .history-card {{
-        background: {HIST} !important;
-        border: 3px solid {CARD_B} !important; border-radius: 16px !important;
+        background: {T['HIST']} !important;
+        border: 3px solid {T['CARD_B']} !important; border-radius: 16px !important;
         padding: 1rem 1.4rem !important; margin-bottom: 1rem !important;
-        box-shadow: 4px 4px 0px {CARD_SH} !important; color: {TEXT} !important;
+        box-shadow: 4px 4px 0px {T['CARD_SH']} !important; color: {T['TEXT']} !important;
     }}
-    .history-card * {{ color: {TEXT} !important; }}
+    .history-card * {{ color: {T['TEXT']} !important; }}
     .era-tag {{
-        background: {"#0d1f14" if dark else "#1b4332"} !important;
-        color: #FDF6E3 !important; padding: 3px 12px;
+        background: {T['ERA_BG']} !important;
+        color: #f9f6e3 !important; padding: 3px 12px;
         border-radius: 12px; font-size: 0.75rem; font-weight: 700;
     }}
 
     /* ── EXPANDER ── */
     [data-testid="stExpander"] {{
-        background: {EXP_BG} !important;
-        border: 3px solid {CARD_B} !important;
+        background: {T['EXP_BG']} !important;
+        border: 3px solid {T['CARD_B']} !important;
         border-radius: 14px !important; margin-bottom: 6px !important;
     }}
-    [data-testid="stExpander"] summary {{ color: {TEXT} !important; font-weight: 800 !important; }}
-    [data-testid="stExpander"] * {{ color: {TEXT} !important; }}
+    [data-testid="stExpander"] summary {{ color: {T['TEXT']} !important; font-weight: 800 !important; }}
+    [data-testid="stExpander"] * {{ color: {T['TEXT']} !important; }}
 
     /* ── TEXT INPUT ── */
     .stTextInput input {{
-        background: {INP_BG} !important;
-        border: 3px solid {CARD_B} !important; border-radius: 12px !important;
-        color: {TEXT} !important; font-family: 'Nunito', sans-serif !important; font-weight: 700 !important;
+        background: {T['INP_BG']} !important;
+        border: 3px solid {T['CARD_B']} !important; border-radius: 12px !important;
+        color: {T['TEXT']} !important; font-family: 'Nunito', sans-serif !important; font-weight: 700 !important;
     }}
 </style>
 """, unsafe_allow_html=True)
 
-render_css(st.session_state.dark_mode)
+T = get_theme(st.session_state.dark_mode)
+render_css(T)
 
 # ─────────────────────────────────────────────
 # SIDEBAR
 # ─────────────────────────────────────────────
 with st.sidebar:
     dark = st.session_state.dark_mode
-    toggle_label = "☀️ Light Mode" if dark else "🌙 Dark Mode"
-    col_title, col_toggle = st.columns([3, 2])
+    col_title, col_toggle = st.columns([5, 1])
     with col_title:
-        st.markdown("<h2 style='color:#FDF6E3 !important;margin:0;padding-top:6px;'>📈 EconoLearn</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='color:#FDF6E3 !important;margin:0;padding-top:4px;'>📈 EconoLearn</h2>", unsafe_allow_html=True)
     with col_toggle:
-        if st.button(toggle_label, key="dark_toggle"):
-            st.session_state.dark_mode = not st.session_state.dark_mode
+        if st.button("☀️" if dark else "🌙", key="dark_toggle"):
+            st.session_state.dark_mode = not dark
             st.rerun()
     st.markdown("---")
 
@@ -1123,7 +1204,7 @@ if page == "Home":
     with c3: st.metric("Streak", f"{st.session_state.streak} days 🔥")
 
     st.markdown("---")
-    st.markdown(f"<h3 style='color:#1b4332 !important;'>Today's Topic: {TOPICS[daily_topic]} {daily_topic}</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 class='accent-h3'>Today's Topic: {TOPICS[daily_topic]} {daily_topic}</h3>", unsafe_allow_html=True)
     lesson = LESSONS.get(daily_topic, {}).get(level)
     if lesson:
         st.markdown(f"<div class='card'><b>{lesson['title']}</b> &nbsp; <span class='level-badge {level.lower()}'>{level}</span></div>", unsafe_allow_html=True)
@@ -1138,7 +1219,7 @@ if page == "Home":
             st.success("✅ Today's lesson completed! +10 XP earned.")
 
     st.markdown("---")
-    st.markdown("<h3 style='color:#1b4332 !important;'>Quick Start</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 class='accent-h3'>Quick Start</h3>", unsafe_allow_html=True)
     q1, q2, q3 = st.columns(3)
     with q1:
         if st.button("❓ Take a Quiz"): st.session_state.page = "Quiz"; st.rerun()
@@ -1148,12 +1229,12 @@ if page == "Home":
         if st.button("🏛️ Economic History"): st.session_state.page = "Economic History"; st.rerun()
 
     st.markdown("---")
-    st.markdown("<h3 style='color:#1b4332 !important;'>Topics Available</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 class='accent-h3'>Topics Available</h3>", unsafe_allow_html=True)
     topic_cols = st.columns(5)
     for i, (t, icon) in enumerate(TOPICS.items()):
         with topic_cols[i % 5]:
             has = t in LESSONS
-            color = "#1b4332" if has else "#777"
+            color = T['ACCENT_HAS'] if has else T['ACCENT_NO']
             st.markdown(f"<div class='topic-tile'><span style='font-size:1.4rem;'>{icon}</span><br><span style='color:{color};'>{t}</span></div>", unsafe_allow_html=True)
 
 # ── DAILY LESSON ──────────────────────────────
@@ -1170,7 +1251,7 @@ elif page == "Daily Lesson":
 
         if lesson.get('key_terms'):
             st.markdown("---")
-            st.markdown("<h3 style='color:#1b4332 !important;'>🔑 Key Terms</h3>", unsafe_allow_html=True)
+            st.markdown("<h3 class='accent-h3'>🔑 Key Terms</h3>", unsafe_allow_html=True)
             cols = st.columns(2)
             for i, (term, definition) in enumerate(lesson['key_terms'].items()):
                 with cols[i % 2]:
@@ -1390,7 +1471,7 @@ elif page == "My Progress":
     with c4: st.metric("Streak", f"{st.session_state.streak} days")
 
     st.markdown("---")
-    st.markdown("<h3 style='color:#1b4332 !important;'>Badges Earned</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 class='accent-h3'>Badges Earned</h3>", unsafe_allow_html=True)
     if st.session_state.badges:
         badge_cols = st.columns(len(st.session_state.badges))
         for col, badge in zip(badge_cols, st.session_state.badges):
@@ -1401,12 +1482,12 @@ elif page == "My Progress":
         st.info("No badges yet. Complete lessons and quizzes to earn them!")
 
     st.markdown("---")
-    st.markdown("<h3 style='color:#1b4332 !important;'>How to Earn XP</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 class='accent-h3'>How to Earn XP</h3>", unsafe_allow_html=True)
     for action, reward in [("Start a daily lesson", "+10 XP"), ("Correct quiz answer", "+15 XP"), ("Quiz attempt (wrong)", "+2 XP"), ("Complete scenario", "+5 XP"), ("Fill-in correct", "+10 XP"), ("Fill-in attempt", "+2 XP")]:
         st.markdown(f"- **{action}**: {reward}")
 
     st.markdown("---")
-    st.markdown("<h3 style='color:#1b4332 !important;'>Lesson Coverage</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 class='accent-h3'>Lesson Coverage</h3>", unsafe_allow_html=True)
     for t, levels_dict in LESSONS.items():
         icon = TOPICS.get(t, "📚")
         badges_html = " ".join(f"<span class='level-badge {l.lower()}'>{l}</span>" for l in levels_dict.keys())
