@@ -738,6 +738,7 @@ def init_state():
         "level": "Beginner", "topic": "Supply & Demand", "page": "Home",
         "total_answered": 0, "correct_answered": 0, "streak": 0,
         "daily_done": set(), "quiz_answered": {}, "xp": 0, "badges": [],
+        "dark_mode": False,
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -762,42 +763,81 @@ def award_xp(amount):
 BADGE_ICONS = {"First 100 XP": "🥉", "500 XP Club": "🥇", "Quiz Starter": "📝", "Quiz Master": "🎓", "3-Day Streak": "🔥"}
 
 # ─────────────────────────────────────────────
-# CSS — DARK GREEN SIDEBAR + COMIC STYLE
+# CSS — THEME AWARE
 # ─────────────────────────────────────────────
-st.markdown("""
+def render_css(dark: bool):
+    if dark:
+        BG       = "#1a2b1a"
+        BLOCK    = "#1a2b1a"
+        TEXT     = "#FDF6E3"
+        CARD     = "#2a3d2a"
+        CARD_B   = "#52b788"
+        CARD_SH  = "#0d1f14"
+        SIDEBAR  = "#0d1f14"
+        SB_B     = "#1b4332"
+        TILE     = "#2a3d2a"
+        TILE_B   = "#52b788"
+        TILE_SH  = "#0d1f14"
+        HIST     = "#243524"
+        INP_BG   = "#2a3d2a"
+        EXP_BG   = "#2a3d2a"
+        METRIC   = "#2a3d2a"
+        SUB_COL  = "#52b788"
+        SEL_BG   = "#2a3d2a"
+        SEL_TEXT = "#FDF6E3"
+        SEL_MENU = "#2a3d2a"
+        SEL_OPT  = "#FDF6E3"
+        SEL_OPT_H= "#1b4332"
+    else:
+        BG       = "#FDF6E3"
+        BLOCK    = "#FDF6E3"
+        TEXT     = "#2D1B1E"
+        CARD     = "#D3DC92"
+        CARD_B   = "#A4BD84"
+        CARD_SH  = "#B17C82"
+        SIDEBAR  = "#1b4332"
+        SB_B     = "#52b788"
+        TILE     = "#D3DC92"
+        TILE_B   = "#A4BD84"
+        TILE_SH  = "#B17C82"
+        HIST     = "#FDF6E3"
+        INP_BG   = "#FDF6E3"
+        EXP_BG   = "#D3DC92"
+        METRIC   = "#D3DC92"
+        SUB_COL  = "#1b4332"
+        SEL_BG   = "#FDF6E3"
+        SEL_TEXT = "#2D1B1E"
+        SEL_MENU = "#FDF6E3"
+        SEL_OPT  = "#2D1B1E"
+        SEL_OPT_H= "#D3DC92"
+
+    st.markdown(f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap');
 
-    html, body, .stApp, [class*="appview-container"] {
+    html, body, .stApp, [class*="appview-container"] {{
         font-family: 'Nunito', sans-serif !important;
-        background-color: #FDF6E3 !important;
-        color: #2D1B1E !important;
-    }
-
-    .main .block-container {
-        background-color: #FDF6E3 !important;
+        background-color: {BG} !important;
+        color: {TEXT} !important;
+    }}
+    .main .block-container {{
+        background-color: {BLOCK} !important;
         padding-top: 2rem !important;
-    }
-
-    p, span, label, li, h1, h2, h3, h4, strong, em {
-        color: #2D1B1E !important;
-    }
+    }}
+    p, span, label, li, h1, h2, h3, h4, strong, em {{
+        color: {TEXT} !important;
+    }}
 
     /* ── SIDEBAR ── */
-    section[data-testid="stSidebar"] {
-        background-color: #1b4332 !important;
+    section[data-testid="stSidebar"] {{
+        background-color: {SIDEBAR} !important;
         border-right: 4px solid #52b788 !important;
-    }
-    section[data-testid="stSidebar"] * {
-        color: #FDF6E3 !important;
-    }
-    section[data-testid="stSidebar"] hr {
-        border-color: #52b788 !important;
-        opacity: 0.5;
-    }
+    }}
+    section[data-testid="stSidebar"] * {{ color: #FDF6E3 !important; }}
+    section[data-testid="stSidebar"] hr {{ border-color: #52b788 !important; opacity: 0.5; }}
 
-    /* ── BUTTONS (main area) ── */
-    .stButton > button {
+    /* ── BUTTONS (main) ── */
+    .stButton > button {{
         font-family: 'Nunito', sans-serif !important;
         font-weight: 800 !important;
         font-size: 0.95rem !important;
@@ -810,17 +850,17 @@ st.markdown("""
         transition: transform 0.1s, box-shadow 0.1s !important;
         width: 100% !important;
         line-height: 1.3 !important;
-    }
+    }}
     .stButton > button > div,
-    .stButton > button > div > div {
+    .stButton > button > div > div {{
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
         padding: 0 !important;
         margin: 0 !important;
-    }
+    }}
     .stButton > button p,
-    .stButton > button span {
+    .stButton > button span {{
         color: #2D1B1E !important;
         font-weight: 800 !important;
         background: transparent !important;
@@ -828,179 +868,199 @@ st.markdown("""
         box-shadow: none !important;
         margin: 0 !important;
         padding: 0 !important;
-    }
+    }}
     .stButton > button [data-testid="stShortcutHint"],
     .stButton > button kbd,
     .stButton > button svg,
-    .stButton > button [class*="shortcut"] {
-        display: none !important;
-    }
-    .stButton > button:hover {
+    .stButton > button [class*="shortcut"] {{ display: none !important; }}
+    .stButton > button:hover {{
         transform: translateY(3px) !important;
         box-shadow: 0px 2px 0px #c47d68 !important;
-    }
-    .stButton > button:active {
+    }}
+    .stButton > button:active {{
         transform: translateY(5px) !important;
         box-shadow: none !important;
-    }
+    }}
 
-    /* ── SIDEBAR BUTTONS (green) ── */
-    section[data-testid="stSidebar"] .stButton > button {
+    /* ── SIDEBAR BUTTONS ── */
+    section[data-testid="stSidebar"] .stButton > button {{
         background-color: #52b788 !important;
         box-shadow: 0px 5px 0px #2d6a4f !important;
         color: #fff !important;
         margin-bottom: 5px !important;
-    }
+    }}
     section[data-testid="stSidebar"] .stButton > button p,
-    section[data-testid="stSidebar"] .stButton > button span {
-        color: #fff !important;
-    }
-    section[data-testid="stSidebar"] .stButton > button:hover {
+    section[data-testid="stSidebar"] .stButton > button span {{ color: #fff !important; }}
+    section[data-testid="stSidebar"] .stButton > button:hover {{
         box-shadow: 0px 2px 0px #2d6a4f !important;
-    }
+    }}
+
+    /* ── SELECTBOX FIX ── */
+    [data-testid="stSelectbox"] > div > div,
+    [data-baseweb="select"] > div,
+    [data-baseweb="select"] {{
+        background-color: {SEL_BG} !important;
+        color: {SEL_TEXT} !important;
+        border: 3px solid {CARD_B} !important;
+        border-radius: 14px !important;
+    }}
+    [data-baseweb="select"] * {{ color: {SEL_TEXT} !important; }}
+    [data-baseweb="select"] svg {{ fill: {SEL_TEXT} !important; color: {SEL_TEXT} !important; }}
+    [data-baseweb="popover"] [role="listbox"],
+    [data-baseweb="menu"] {{
+        background-color: {SEL_MENU} !important;
+        border: 2px solid {CARD_B} !important;
+        border-radius: 12px !important;
+    }}
+    [data-baseweb="menu"] li,
+    [data-baseweb="menu"] [role="option"] {{
+        background-color: {SEL_MENU} !important;
+        color: {SEL_OPT} !important;
+        font-weight: 700 !important;
+    }}
+    [data-baseweb="menu"] li:hover,
+    [data-baseweb="menu"] [role="option"]:hover,
+    [data-baseweb="menu"] [aria-selected="true"] {{
+        background-color: {SEL_OPT_H} !important;
+        color: {SEL_OPT} !important;
+    }}
+    section[data-testid="stSidebar"] [data-baseweb="select"] > div,
+    section[data-testid="stSidebar"] [data-baseweb="select"] {{
+        background-color: #2d6a4f !important;
+        border-color: #52b788 !important;
+    }}
+    section[data-testid="stSidebar"] [data-baseweb="select"] * {{ color: #FDF6E3 !important; }}
+    section[data-testid="stSidebar"] [data-baseweb="select"] svg {{ fill: #FDF6E3 !important; }}
+    section[data-testid="stSidebar"] [data-baseweb="menu"] {{
+        background-color: #1b4332 !important;
+    }}
+    section[data-testid="stSidebar"] [data-baseweb="menu"] li {{ color: #FDF6E3 !important; }}
+    section[data-testid="stSidebar"] [data-baseweb="menu"] li:hover {{ background-color: #2d6a4f !important; }}
 
     /* ── CARDS ── */
-    .card {
-        background: #D3DC92 !important;
+    .card {{
+        background: {CARD} !important;
         border-radius: 20px !important;
         padding: 1.2rem 1.5rem !important;
         margin-bottom: 1rem !important;
-        border: 4px solid #A4BD84 !important;
-        box-shadow: 6px 6px 0px #B17C82 !important;
-        color: #2D1B1E !important;
-    }
-    .card * { color: #2D1B1E !important; }
+        border: 4px solid {CARD_B} !important;
+        box-shadow: 6px 6px 0px {CARD_SH} !important;
+        color: {TEXT} !important;
+    }}
+    .card * {{ color: {TEXT} !important; }}
+    .card-green {{ background: #2d5a3d !important; border-color: #52b788 !important; box-shadow: 6px 6px 0px #0d1f14 !important; }}
+    .card-red   {{ background: #5a3020 !important; border-color: #e76f51 !important; box-shadow: 6px 6px 0px #3a1a10 !important; }}
+    .card-gold  {{ background: #5a4a10 !important; border-color: #f4a261 !important; box-shadow: 6px 6px 0px #3a2e08 !important; }}
+    {"" if dark else """
     .card-green { background: #b7e4c7 !important; border-color: #52b788 !important; box-shadow: 6px 6px 0px #2d6a4f !important; }
     .card-red   { background: #fec89a !important; border-color: #e76f51 !important; box-shadow: 6px 6px 0px #c47d68 !important; }
     .card-gold  { background: #ffe8a3 !important; border-color: #f4a261 !important; box-shadow: 6px 6px 0px #e76f51 !important; }
+    """}
 
     /* ── TITLES ── */
-    .main-title {
-        font-size: 3rem;
-        font-weight: 800;
+    .main-title {{
+        font-size: 3rem; font-weight: 800;
         color: #B17C82 !important;
         text-shadow: 3px 3px 0px #A4BD84;
-        text-align: center;
-        margin-bottom: 0.2rem;
-    }
-    .subtitle {
-        color: #1b4332 !important;
-        font-size: 1.2rem;
-        font-weight: 800;
-        text-align: center;
-        margin-bottom: 2rem;
-    }
+        text-align: center; margin-bottom: 0.2rem;
+    }}
+    .subtitle {{
+        color: {SUB_COL} !important;
+        font-size: 1.2rem; font-weight: 800;
+        text-align: center; margin-bottom: 2rem;
+    }}
 
     /* ── XP BAR ── */
-    .xp-bar {
-        background: #2d6a4f;
-        border-radius: 50px;
-        height: 18px;
-        border: 3px solid #52b788;
-        overflow: hidden;
-        margin: 6px 0 12px 0;
-    }
-    .xp-fill { background: #FCAB92; height: 100%; border-radius: 50px; }
+    .xp-bar {{
+        background: #0d1f14; border-radius: 50px; height: 18px;
+        border: 3px solid #52b788; overflow: hidden; margin: 6px 0 12px 0;
+    }}
+    .xp-fill {{ background: #FCAB92; height: 100%; border-radius: 50px; }}
 
     /* ── LEVEL BADGES ── */
-    .level-badge {
-        display: inline-block;
-        padding: 4px 14px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 800;
-        color: #fff !important;
-    }
-    .beginner     { background: #52b788 !important; }
-    .intermediate { background: #f4a261 !important; }
-    .advanced     { background: #B17C82 !important; }
+    .level-badge {{
+        display: inline-block; padding: 4px 14px;
+        border-radius: 20px; font-size: 0.85rem; font-weight: 800; color: #fff !important;
+    }}
+    .beginner     {{ background: #52b788 !important; }}
+    .intermediate {{ background: #f4a261 !important; }}
+    .advanced     {{ background: #B17C82 !important; }}
 
     /* ── METRICS ── */
-    [data-testid="metric-container"] {
-        background: #D3DC92 !important;
-        border-radius: 16px !important;
-        padding: 0.8rem !important;
-        border: 3px solid #A4BD84 !important;
-        box-shadow: 5px 5px 0px #B17C82 !important;
-    }
+    [data-testid="metric-container"] {{
+        background: {METRIC} !important;
+        border-radius: 16px !important; padding: 0.8rem !important;
+        border: 3px solid {CARD_B} !important;
+        box-shadow: 5px 5px 0px {CARD_SH} !important;
+    }}
     [data-testid="metric-container"] label,
-    [data-testid="metric-container"] div { color: #2D1B1E !important; font-weight: 800 !important; }
+    [data-testid="metric-container"] div {{ color: {TEXT} !important; font-weight: 800 !important; }}
 
     /* ── TOPIC TILES ── */
-    .topic-tile {
-        background: #D3DC92;
-        border: 3px solid #A4BD84;
-        border-radius: 14px;
-        padding: 10px 4px 6px 4px;
-        text-align: center;
-        color: #2D1B1E !important;
-        font-weight: 800;
-        font-size: 0.8rem;
-        box-shadow: 4px 4px 0px #B17C82;
-        margin-bottom: 4px;
-        line-height: 1.4;
-    }
+    .topic-tile {{
+        background: {TILE}; border: 3px solid {TILE_B}; border-radius: 14px;
+        padding: 10px 4px 6px 4px; text-align: center;
+        color: {TEXT} !important; font-weight: 800; font-size: 0.8rem;
+        box-shadow: 4px 4px 0px {TILE_SH}; margin-bottom: 4px; line-height: 1.4;
+    }}
 
     /* ── CONCEPT CHAIN ── */
-    .concept-box {
-        background: #ffe8a3 !important;
-        border: 2px solid #f4a261;
-        border-radius: 10px;
-        padding: 6px 12px;
-        margin: 3px;
-        display: inline-block;
-        font-weight: 700;
-        color: #2D1B1E !important;
-        font-size: 0.88rem;
-    }
-    .chain-arrow { font-size: 1.3rem; color: #B17C82 !important; margin: 2px; }
+    .concept-box {{
+        background: {"#3a4a1a" if dark else "#ffe8a3"} !important;
+        border: 2px solid {"#A4BD84" if dark else "#f4a261"};
+        border-radius: 10px; padding: 6px 12px; margin: 3px;
+        display: inline-block; font-weight: 700;
+        color: {TEXT} !important; font-size: 0.88rem;
+    }}
+    .chain-arrow {{ font-size: 1.3rem; color: #B17C82 !important; margin: 2px; }}
 
     /* ── HISTORY CARDS ── */
-    .history-card {
-        background: #FDF6E3 !important;
-        border: 3px solid #A4BD84 !important;
-        border-radius: 16px !important;
-        padding: 1rem 1.4rem !important;
-        margin-bottom: 1rem !important;
-        box-shadow: 4px 4px 0px #B17C82 !important;
-        color: #2D1B1E !important;
-    }
-    .history-card * { color: #2D1B1E !important; }
-    .era-tag {
-        background: #1b4332 !important;
-        color: #FDF6E3 !important;
-        padding: 3px 12px;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        font-weight: 700;
-    }
+    .history-card {{
+        background: {HIST} !important;
+        border: 3px solid {CARD_B} !important; border-radius: 16px !important;
+        padding: 1rem 1.4rem !important; margin-bottom: 1rem !important;
+        box-shadow: 4px 4px 0px {CARD_SH} !important; color: {TEXT} !important;
+    }}
+    .history-card * {{ color: {TEXT} !important; }}
+    .era-tag {{
+        background: {"#0d1f14" if dark else "#1b4332"} !important;
+        color: #FDF6E3 !important; padding: 3px 12px;
+        border-radius: 12px; font-size: 0.75rem; font-weight: 700;
+    }}
 
-    /* ── EXPANDER / TABS ── */
-    [data-testid="stExpander"] {
-        background: #D3DC92 !important;
-        border: 3px solid #A4BD84 !important;
-        border-radius: 14px !important;
-        margin-bottom: 6px !important;
-    }
-    [data-testid="stExpander"] summary { color: #2D1B1E !important; font-weight: 800 !important; }
+    /* ── EXPANDER ── */
+    [data-testid="stExpander"] {{
+        background: {EXP_BG} !important;
+        border: 3px solid {CARD_B} !important;
+        border-radius: 14px !important; margin-bottom: 6px !important;
+    }}
+    [data-testid="stExpander"] summary {{ color: {TEXT} !important; font-weight: 800 !important; }}
+    [data-testid="stExpander"] * {{ color: {TEXT} !important; }}
 
     /* ── TEXT INPUT ── */
-    .stTextInput input {
-        background: #FDF6E3 !important;
-        border: 3px solid #A4BD84 !important;
-        border-radius: 12px !important;
-        color: #2D1B1E !important;
-        font-family: 'Nunito', sans-serif !important;
-        font-weight: 700 !important;
-    }
+    .stTextInput input {{
+        background: {INP_BG} !important;
+        border: 3px solid {CARD_B} !important; border-radius: 12px !important;
+        color: {TEXT} !important; font-family: 'Nunito', sans-serif !important; font-weight: 700 !important;
+    }}
 </style>
 """, unsafe_allow_html=True)
+
+render_css(st.session_state.dark_mode)
 
 # ─────────────────────────────────────────────
 # SIDEBAR
 # ─────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("<h2 style='text-align:center;color:#FDF6E3 !important;'>📈 EconoLearn</h2>", unsafe_allow_html=True)
+    dark = st.session_state.dark_mode
+    toggle_label = "☀️ Light Mode" if dark else "🌙 Dark Mode"
+    col_title, col_toggle = st.columns([3, 2])
+    with col_title:
+        st.markdown("<h2 style='color:#FDF6E3 !important;margin:0;padding-top:6px;'>📈 EconoLearn</h2>", unsafe_allow_html=True)
+    with col_toggle:
+        if st.button(toggle_label, key="dark_toggle"):
+            st.session_state.dark_mode = not st.session_state.dark_mode
+            st.rerun()
     st.markdown("---")
 
     xp = st.session_state.xp
