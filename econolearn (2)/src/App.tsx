@@ -148,15 +148,26 @@ export default function App() {
   const renderSidebar = () => (
     <div className={`w-64 flex-shrink-0 border-r transition-colors duration-300 ${darkMode ? "bg-[#16142a] border-[#514d86]" : "bg-[#6aa08f] border-[#b8c4a4]"} flex flex-col h-screen sticky top-0`}>
       <div className="p-6 flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-[#FDF6E3] flex items-center gap-2">
-          <TrendingUp size={24} /> EconoLearn
+        <h2 className="text-2xl font-black text-[#FDF6E3] flex items-center gap-2 tracking-tighter">
+          <TrendingUp size={28} strokeWidth={3} /> ECONO
         </h2>
         <button 
           onClick={toggleDarkMode}
-          className={`p-2 rounded-full transition-all ${darkMode ? "bg-[#514d86] text-yellow-400" : "bg-[#4a7a6e] text-white"} hover:scale-110`}
+          className={`p-2 rounded-full transition-all ${darkMode ? "bg-[#514d86] text-yellow-400" : "bg-[#4a7a6e] text-white"} hover:scale-110 shadow-lg`}
         >
           {darkMode ? <Sun size={18} /> : <Moon size={18} />}
         </button>
+      </div>
+
+      <div className="px-4 mb-6">
+        <div className={`flex items-center gap-2 px-3 py-2 rounded-xl border-2 ${darkMode ? "bg-[#16142a] border-[#514d86]" : "bg-[#4a7a6e] border-[#b8c4a4]"} text-white/50`}>
+          <Search size={16} />
+          <input 
+            type="text" 
+            placeholder="Search topics..." 
+            className="bg-transparent border-none text-xs font-bold text-white placeholder-white/30 outline-none w-full"
+          />
+        </div>
       </div>
 
       <div className="px-6 mb-6">
@@ -240,72 +251,102 @@ export default function App() {
   );
 
   const renderHome = () => (
-    <div className="space-y-8">
-      <div className="text-center space-y-2">
-        <h1 className={`text-6xl font-black tracking-tight ${darkMode ? "text-[#e2d6fa] drop-shadow-[3px_3px_0_#816cb1]" : "text-[#7f4a4f] drop-shadow-[3px_3px_0_#b8c4a4]"}`}>
-          EconoLearn
-        </h1>
-        <p className={`text-xl font-bold ${darkMode ? "text-[#c5c5ff]" : "text-[#6aa08f]"}`}>
-          Master economics — from supply & demand to financial crises.
-        </p>
+    <div className="space-y-12">
+      <div className="flex flex-col md:flex-row items-end justify-between gap-4 border-b-4 border-current pb-6">
+        <div className="space-y-1">
+          <h1 className={`text-8xl font-black tracking-tighter uppercase leading-[0.85] ${darkMode ? "text-[#e2d6fa]" : "text-[#2d2020]"}`}>
+            Econo<br/>Learn
+          </h1>
+          <p className={`text-sm font-black uppercase tracking-[0.2em] ${darkMode ? "text-[#d289ae]" : "text-[#6aa08f]"}`}>
+            The Global Market Intelligence Portal
+          </p>
+        </div>
+        <div className="text-right hidden md:block">
+          <p className="text-xs font-black uppercase opacity-40">Issue No. 001</p>
+          <p className="text-xs font-black uppercase opacity-40">{new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
-          { label: "Your XP", value: `${xp} XP`, icon: <Award className="text-yellow-500" /> },
-          { label: "Accuracy", value: totalAnswered > 0 ? `${Math.round((correctAnswered / totalAnswered) * 100)}%` : "—", icon: <CheckCircle2 className="text-green-500" /> },
-          { label: "Streak", value: `${streak} days`, icon: <Flame className="text-orange-500" /> },
+          { label: "Knowledge XP", value: xp, icon: <Award className="text-yellow-500" />, color: "bg-yellow-50" },
+          { label: "Global Accuracy", value: totalAnswered > 0 ? `${Math.round((correctAnswered / totalAnswered) * 100)}%` : "—", icon: <CheckCircle2 className="text-green-500" />, color: "bg-green-50" },
+          { label: "Learning Streak", value: `${streak}d`, icon: <Flame className="text-orange-500" />, color: "bg-orange-50" },
         ].map((stat, i) => (
-          <div key={i} className={`p-6 rounded-3xl border-4 flex flex-col items-center gap-2 transition-all hover:scale-105 ${darkMode ? "bg-[#514d86] border-[#816cb1] shadow-[5px_5px_0_#16142a]" : "bg-[#dbe8cd] border-[#b8c4a4] shadow-[5px_5px_0_#8b82a8]"}`}>
-            <div className="p-3 rounded-full bg-white/10">{stat.icon}</div>
-            <span className="text-xs font-black uppercase tracking-widest opacity-60">{stat.label}</span>
-            <span className="text-3xl font-black">{stat.value}</span>
-          </div>
+          <motion.div 
+            key={i} 
+            whileHover={{ y: -5 }}
+            className={`p-8 rounded-[2rem] border-4 flex flex-col items-start gap-4 transition-all ${darkMode ? "bg-[#2a2840] border-[#816cb1] shadow-[8px_8px_0_#16142a]" : "bg-white border-[#2d2020] shadow-[8px_8px_0_#b8c4a4]"}`}
+          >
+            <div className={`p-4 rounded-2xl ${darkMode ? "bg-white/5" : stat.color}`}>{stat.icon}</div>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest opacity-50 mb-1">{stat.label}</p>
+              <p className="text-4xl font-black tracking-tighter">{stat.value}</p>
+            </div>
+          </motion.div>
         ))}
       </div>
 
-      <div className={`p-8 rounded-[2rem] border-4 ${darkMode ? "bg-[#2a2840] border-[#816cb1]" : "bg-white border-[#b8c4a4]"} shadow-xl`}>
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-2xl font-black flex items-center gap-2">
-            <Zap className="text-yellow-500" /> Today's Topic: {TOPICS[topic]} {topic}
-          </h3>
-          <span className={`px-4 py-1 rounded-full text-xs font-black uppercase ${level === "Beginner" ? "bg-green-100 text-green-700" : level === "Intermediate" ? "bg-orange-100 text-orange-700" : "bg-red-100 text-red-700"}`}>
-            {level}
-          </span>
-        </div>
-        
-        {LESSONS[topic]?.[level] ? (
-          <div className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className={`lg:col-span-8 p-10 rounded-[3rem] border-4 ${darkMode ? "bg-[#2a2840] border-[#816cb1] shadow-[12px_12px_0_#16142a]" : "bg-white border-[#2d2020] shadow-[12px_12px_0_#b8c4a4]"} flex flex-col justify-between min-h-[400px]`}>
+          <div>
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-yellow-400 flex items-center justify-center">
+                  <Zap className="text-white" fill="currentColor" />
+                </div>
+                <h3 className="text-3xl font-black uppercase tracking-tighter">Today's Topic</h3>
+              </div>
+              <span className={`px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest ${level === "Beginner" ? "bg-green-500 text-white" : level === "Intermediate" ? "bg-orange-500 text-white" : "bg-red-500 text-white"}`}>
+                {level}
+              </span>
+            </div>
+            
+            <h4 className="text-6xl font-black mb-4 leading-none tracking-tighter italic font-serif">
+              {topic}
+            </h4>
+            <p className="text-xl font-bold opacity-60 max-w-md mb-12">
+              Deep dive into {topic.toLowerCase()} and master the core principles of economic theory.
+            </p>
+          </div>
+          
+          {LESSONS[topic]?.[level] ? (
             <button 
               onClick={() => setPage("Daily Lesson")}
-              className={`w-full py-4 rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-2 ${
-                darkMode ? "bg-[#d289ae] text-[#16142a] shadow-[0_4px_0_#8a4a6e] hover:translate-y-1 hover:shadow-[0_2px_0_#8a4a6e]" : "bg-[#e8ae7d] text-[#2d2020] shadow-[0_4px_0_#a56066] hover:translate-y-1 hover:shadow-[0_2px_0_#a56066]"
+              className={`w-full md:w-auto px-12 py-6 rounded-3xl font-black text-2xl transition-all flex items-center justify-center gap-4 ${
+                darkMode ? "bg-[#d289ae] text-[#16142a] shadow-[0_8px_0_#8a4a6e] hover:translate-y-1 hover:shadow-[0_4px_0_#8a4a6e]" : "bg-[#2d2020] text-white shadow-[0_8px_0_#000] hover:translate-y-1 hover:shadow-[0_4px_0_#000]"
               }`}
             >
-              Start Today's Lesson <ChevronRight size={20} />
+              Start Today's Lesson <ChevronRight size={28} strokeWidth={3} />
             </button>
-          </div>
-        ) : (
-          <p className="text-center py-10 opacity-50 italic">No lesson available for this topic and level yet.</p>
-        )}
-      </div>
+          ) : (
+            <p className="text-center py-10 opacity-50 italic font-bold">No lesson available for this topic and level yet.</p>
+          )}
+        </div>
 
-      <div className="grid grid-cols-3 gap-4">
-        {[
-          { icon: <HelpCircle />, label: "Take a Quiz", page: "Quiz" },
-          { icon: <Target />, label: "Scenario Exercise", page: "Scenarios" },
-          { icon: <History />, label: "Economic History", page: "Economic History" },
-        ].map((action, i) => (
-          <button
-            key={i}
-            onClick={() => setPage(action.page as Page)}
-            className={`p-4 rounded-2xl border-2 font-bold flex items-center gap-3 transition-all hover:scale-105 ${
-              darkMode ? "bg-[#514d86] border-[#816cb1] text-white" : "bg-[#dbe8cd] border-[#b8c4a4] text-[#2d2020]"
-            }`}
-          >
-            {action.icon} {action.label}
-          </button>
-        ))}
+        <div className="lg:col-span-4 flex flex-col gap-6">
+          {[
+            { icon: <HelpCircle size={32} />, label: "Take a Quiz", page: "Quiz", color: "bg-blue-500" },
+            { icon: <Target size={32} />, label: "Scenarios", page: "Scenarios", color: "bg-purple-500" },
+            { icon: <History size={32} />, label: "History", page: "Economic History", color: "bg-emerald-500" },
+          ].map((action, i) => (
+            <button
+              key={i}
+              onClick={() => setPage(action.page as Page)}
+              className={`flex-1 p-8 rounded-[2.5rem] border-4 font-black text-xl flex flex-col items-start justify-between transition-all hover:scale-[1.02] text-left group ${
+                darkMode ? "bg-[#2a2840] border-[#816cb1] shadow-[8px_8px_0_#16142a]" : "bg-white border-[#2d2020] shadow-[8px_8px_0_#b8c4a4]"
+              }`}
+            >
+              <div className={`p-4 rounded-2xl text-white transition-transform group-hover:rotate-12 ${action.color}`}>
+                {action.icon}
+              </div>
+              <div className="flex items-center justify-between w-full">
+                <span>{action.label}</span>
+                <ChevronRight size={24} strokeWidth={3} />
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
