@@ -1,6 +1,6 @@
-# EconoLearn 📈
+# ECONOLEARN
 
-An interactive economics learning app built with Streamlit and Claude Code. I wish to update it and I also welcome any changes and suggestions.
+An interactive economics learning app built with Streamlit and Claude Code. I wish to update it and I also welcome any changes and suggestions :))
 
 ## Features
 
