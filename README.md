@@ -1,16 +1,16 @@
 # EconoLearn 📈
 
-An interactive economics learning app built with Streamlit. Learn how the economy works through daily lessons, quizzes, and exercises — from beginner to advanced.
+An interactive economics learning app built with Streamlit and Claude Code. I wish to update it and I also welcome any changes and suggestions.
 
 ## Features
 
-- **3 Difficulty Levels** — Beginner, Intermediate, Advanced
-- **Multiple Exercise Types** — Quizzes, fill-in-the-blank, scenarios, concept chains
-- **Daily Lessons** — A new topic every day, rotating automatically
-- **Economic History Timeline** — Key events from 1776 to today
-- **XP & Badge System** — Earn XP and badges as you progress
-- **Light & Dark Mode** — Toggle between themes with a single click
-- **Topics Covered** — Supply & Demand, Inflation, GDP, Monetary Policy, Trade, Market Failures, and more
+- **3 Difficulty Levels**: Beginner, Intermediate, Advanced
+- **Multiple Exercise Types**: Quizzes, fill-in-the-blank, scenarios, concept chains
+- **Daily Lessons**: A new topic every day, rotating automatically
+- **Economic History Timeline**: Key events from 1776 to today
+- **XP & Badge System**: Earn XP and badges as you progress
+- **Light & Dark Mode**: Toggle between themes with a single click
+- **Topics Covered**: Supply & Demand, Inflation, GDP, Monetary Policy, Trade, Market Failures, and more
 
 ## Run Locally
 
