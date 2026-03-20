@@ -922,7 +922,11 @@ def render_css(T: dict):
         box-shadow: 0px 5px 0px {T['BTN_SH']} !important;
         transition: transform 0.1s, box-shadow 0.1s !important;
         width: 100% !important;
-        line-height: 1.3 !important;
+        line-height: 1 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
     }}
     .stButton > button > div,
     .stButton > button > div > div {{
@@ -931,6 +935,10 @@ def render_css(T: dict):
         box-shadow: none !important;
         padding: 0 !important;
         margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
     }}
     .stButton > button p,
     .stButton > button span {{
@@ -941,6 +949,10 @@ def render_css(T: dict):
         box-shadow: none !important;
         margin: 0 !important;
         padding: 0 !important;
+        line-height: 1 !important;
+        text-align: center !important;
+        display: block !important;
+        width: 100% !important;
     }}
     .stButton > button [data-testid="stShortcutHint"],
     .stButton > button kbd,
@@ -975,9 +987,30 @@ def render_css(T: dict):
         width: 36px !important;
         padding: 0 !important;
         border-radius: 50% !important;
-        font-size: 1.1rem !important;
+        font-size: 1.2rem !important;
         box-shadow: 0px 3px 0px {T['TOGGLE_SH']} !important;
-        margin-top: 2px;
+        margin-top: 2px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        line-height: 1 !important;
+    }}
+    div[data-testid="stSidebar"] div[data-testid="column"]:last-child .stButton > button > div,
+    div[data-testid="stSidebar"] div[data-testid="column"]:last-child .stButton > button > div > div {{
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        height: 100% !important;
+    }}
+    div[data-testid="stSidebar"] div[data-testid="column"]:last-child .stButton > button p,
+    div[data-testid="stSidebar"] div[data-testid="column"]:last-child .stButton > button span {{
+        line-height: 1 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }}
     div[data-testid="stSidebar"] div[data-testid="column"]:last-child .stButton > button:hover {{
         box-shadow: 0px 1px 0px {T['TOGGLE_SH']} !important;
