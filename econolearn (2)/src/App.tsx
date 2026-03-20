@@ -22,16 +22,17 @@ import { motion, AnimatePresence } from "motion/react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { 
-  LEVELS, 
-  TOPICS, 
+  LEVELS,
+  TOPICS,
   LESSONS, 
   QUIZ_QUESTIONS, 
   SCENARIO_EXERCISES, 
   HISTORY_EVENTS, 
   FILL_IN_BLANKS, 
-  CONCEPT_CONNECTIONS 
+  CONCEPT_CONNECTIONS,
+  UNITS
 } from "./constants";
-import { Level, Lesson, QuizQuestion, Scenario, HistoryEvent, FillInBlank, ConceptChain } from "./types";
+import { Level, Lesson, QuizQuestion, Scenario, HistoryEvent, FillInBlank, ConceptChain, Unit, MapNode } from "./types";
 
 type Page = "Home" | "Daily Lesson" | "Quiz" | "Scenarios" | "Fill in the Blanks" | "Concept Chains" | "Economic History" | "My Progress";
 
@@ -116,6 +117,14 @@ export default function App() {
     }
   });
 
+  const [completedNodes, setCompletedNodes] = useState<string[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem("econ_completedNodes") || "[]");
+    } catch (e) {
+      return [];
+    }
+  });
+
   useEffect(() => {
     try {
       localStorage.setItem("econ_level", level);
@@ -129,10 +138,11 @@ export default function App() {
       localStorage.setItem("econ_quizAnswers", JSON.stringify(quizAnswers));
       localStorage.setItem("econ_scenarioRevealed", JSON.stringify(scenarioRevealed));
       localStorage.setItem("econ_fibSubmitted", JSON.stringify(fibSubmitted));
+      localStorage.setItem("econ_completedNodes", JSON.stringify(completedNodes));
     } catch (e) {
       console.warn("localStorage not available", e);
     }
-  }, [level, topic, xp, streak, darkMode, totalAnswered, correctAnswered, dailyDone, quizAnswers, scenarioRevealed, fibSubmitted]);
+  }, [level, topic, xp, streak, darkMode, totalAnswered, correctAnswered, dailyDone, quizAnswers, scenarioRevealed, fibSubmitted, completedNodes]);
 
   useEffect(() => {
     // Mock streak logic - in a real app this would check the last login date
@@ -250,6 +260,85 @@ export default function App() {
     </div>
   );
 
+  const renderMap = () => {
+    const isNodeUnlocked = (nodeId: string) => {
+      const allNodes = UNITS.flatMap(u => u.nodes);
+      const nodeIndex = allNodes.findIndex(n => n.id === nodeId);
+      if (nodeIndex === 0) return true;
+      const prevNode = allNodes[nodeIndex - 1];
+      return completedNodes.includes(prevNode.id);
+    };
+
+    return (
+      <div className="max-w-2xl mx-auto py-12 px-4 space-y-24">
+        {UNITS.map((unit, unitIdx) => (
+          <div key={unit.id} className="space-y-12">
+            <div className={`p-8 rounded-[2.5rem] border-4 ${darkMode ? "bg-[#2a2840] border-[#816cb1] text-white" : "bg-[#6aa08f] border-[#2d2020] text-[#FDF6E3]"} shadow-[12px_12px_0_rgba(0,0,0,0.1)]`}>
+              <h3 className="text-xs font-black uppercase tracking-[0.2em] opacity-80 mb-2">{unit.level}</h3>
+              <h2 className="text-4xl font-black tracking-tighter mb-4">{unit.title}</h2>
+              <p className="text-lg font-medium opacity-90 leading-tight">{unit.description}</p>
+            </div>
+
+            <div className="flex flex-col items-center gap-12 relative">
+              {/* Path line */}
+              <div className={`absolute top-0 bottom-0 w-2 ${darkMode ? "bg-[#514d86]" : "bg-[#2d2020]/10"} -z-10`} />
+              
+              {unit.nodes.map((node, nodeIdx) => {
+                const unlocked = isNodeUnlocked(node.id);
+                const completed = completedNodes.includes(node.id);
+                const offset = (nodeIdx % 3 - 1) * 60; // S-curve offset
+
+                return (
+                  <motion.button
+                    key={node.id}
+                    whileHover={unlocked ? { scale: 1.1, y: -5 } : {}}
+                    whileTap={unlocked ? { scale: 0.95 } : {}}
+                    onClick={() => {
+                      if (unlocked) {
+                        setTopic(node.topic);
+                        setLevel(node.level);
+                        setPage("Daily Lesson");
+                      }
+                    }}
+                    style={{ x: offset }}
+                    className={`relative w-24 h-24 rounded-full border-4 flex items-center justify-center text-4xl shadow-xl transition-all ${
+                      completed 
+                        ? (darkMode ? "bg-[#d289ae] border-[#816cb1]" : "bg-[#e8ae7d] border-[#2d2020]") 
+                        : unlocked 
+                          ? (darkMode ? "bg-[#514d86] border-[#816cb1]" : "bg-white border-[#2d2020]")
+                          : (darkMode ? "bg-[#16142a] border-[#514d86] opacity-50 cursor-not-allowed" : "bg-gray-200 border-gray-300 opacity-50 cursor-not-allowed")
+                    }`}
+                  >
+                    {node.icon}
+                    {completed && (
+                      <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full p-1 border-2 border-white shadow-lg">
+                        <CheckCircle2 size={16} strokeWidth={3} />
+                      </div>
+                    )}
+                    {!unlocked && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-full">
+                        <Zap size={24} className="text-white/50" />
+                      </div>
+                    )}
+                    
+                    {/* Tooltip-like label */}
+                    <div className={`absolute top-full mt-4 whitespace-nowrap px-4 py-2 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest ${
+                      unlocked 
+                        ? (darkMode ? "bg-[#2a2840] border-[#816cb1] text-white" : "bg-white border-[#2d2020] text-[#2d2020]")
+                        : "bg-gray-100 border-gray-200 text-gray-400"
+                    }`}>
+                      {node.title}
+                    </div>
+                  </motion.button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const renderHome = () => (
     <div className="space-y-12">
       <div className="flex flex-col md:flex-row items-end justify-between gap-4 border-b-4 border-current pb-6">
@@ -267,93 +356,22 @@ export default function App() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {[
-          { label: "Knowledge XP", value: xp, icon: <Award className="text-yellow-500" />, color: "bg-yellow-50" },
-          { label: "Global Accuracy", value: totalAnswered > 0 ? `${Math.round((correctAnswered / totalAnswered) * 100)}%` : "—", icon: <CheckCircle2 className="text-green-500" />, color: "bg-green-50" },
-          { label: "Learning Streak", value: `${streak}d`, icon: <Flame className="text-orange-500" />, color: "bg-orange-50" },
-        ].map((stat, i) => (
-          <motion.div 
-            key={i} 
-            whileHover={{ y: -5 }}
-            className={`p-8 rounded-[2rem] border-4 flex flex-col items-start gap-4 transition-all ${darkMode ? "bg-[#2a2840] border-[#816cb1] shadow-[8px_8px_0_#16142a]" : "bg-white border-[#2d2020] shadow-[8px_8px_0_#b8c4a4]"}`}
-          >
-            <div className={`p-4 rounded-2xl ${darkMode ? "bg-white/5" : stat.color}`}>{stat.icon}</div>
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest opacity-50 mb-1">{stat.label}</p>
-              <p className="text-4xl font-black tracking-tighter">{stat.value}</p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className={`lg:col-span-8 p-10 rounded-[3rem] border-4 ${darkMode ? "bg-[#2a2840] border-[#816cb1] shadow-[12px_12px_0_#16142a]" : "bg-white border-[#2d2020] shadow-[12px_12px_0_#b8c4a4]"} flex flex-col justify-between min-h-[400px]`}>
-          <div>
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-yellow-400 flex items-center justify-center">
-                  <Zap className="text-white" fill="currentColor" />
-                </div>
-                <h3 className="text-3xl font-black uppercase tracking-tighter">Today's Topic</h3>
-              </div>
-              <span className={`px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest ${level === "Beginner" ? "bg-green-500 text-white" : level === "Intermediate" ? "bg-orange-500 text-white" : "bg-red-500 text-white"}`}>
-                {level}
-              </span>
-            </div>
-            
-            <h4 className="text-6xl font-black mb-4 leading-none tracking-tighter italic font-serif">
-              {topic}
-            </h4>
-            <p className="text-xl font-bold opacity-60 max-w-md mb-12">
-              Deep dive into {topic.toLowerCase()} and master the core principles of economic theory.
-            </p>
-          </div>
-          
-          {LESSONS[topic]?.[level] ? (
-            <button 
-              onClick={() => setPage("Daily Lesson")}
-              className={`w-full md:w-auto px-12 py-6 rounded-3xl font-black text-2xl transition-all flex items-center justify-center gap-4 ${
-                darkMode ? "bg-[#d289ae] text-[#16142a] shadow-[0_8px_0_#8a4a6e] hover:translate-y-1 hover:shadow-[0_4px_0_#8a4a6e]" : "bg-[#2d2020] text-white shadow-[0_8px_0_#000] hover:translate-y-1 hover:shadow-[0_4px_0_#000]"
-              }`}
-            >
-              Start Today's Lesson <ChevronRight size={28} strokeWidth={3} />
-            </button>
-          ) : (
-            <p className="text-center py-10 opacity-50 italic font-bold">No lesson available for this topic and level yet.</p>
-          )}
-        </div>
-
-        <div className="lg:col-span-4 flex flex-col gap-6">
-          {[
-            { icon: <HelpCircle size={32} />, label: "Take a Quiz", page: "Quiz", color: "bg-blue-500" },
-            { icon: <Target size={32} />, label: "Scenarios", page: "Scenarios", color: "bg-purple-500" },
-            { icon: <History size={32} />, label: "History", page: "Economic History", color: "bg-emerald-500" },
-          ].map((action, i) => (
-            <button
-              key={i}
-              onClick={() => setPage(action.page as Page)}
-              className={`flex-1 p-8 rounded-[2.5rem] border-4 font-black text-xl flex flex-col items-start justify-between transition-all hover:scale-[1.02] text-left group ${
-                darkMode ? "bg-[#2a2840] border-[#816cb1] shadow-[8px_8px_0_#16142a]" : "bg-white border-[#2d2020] shadow-[8px_8px_0_#b8c4a4]"
-              }`}
-            >
-              <div className={`p-4 rounded-2xl text-white transition-transform group-hover:rotate-12 ${action.color}`}>
-                {action.icon}
-              </div>
-              <div className="flex items-center justify-between w-full">
-                <span>{action.label}</span>
-                <ChevronRight size={24} strokeWidth={3} />
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
+      {renderMap()}
     </div>
   );
 
-  const renderLesson = () => {
+  const renderDailyLesson = () => {
     const lesson = LESSONS[topic]?.[level];
     if (!lesson) return <div className="text-center py-20 opacity-50 italic">No lesson available for this topic and level.</div>;
+
+    const markAsComplete = () => {
+      const node = UNITS.flatMap(u => u.nodes).find(n => n.topic === topic && n.level === level);
+      if (node && !completedNodes.includes(node.id)) {
+        setCompletedNodes(prev => [...prev, node.id]);
+        awardXp(50);
+      }
+      setPage("Home");
+    };
 
     return (
       <div className="max-w-3xl mx-auto space-y-8">
@@ -388,8 +406,12 @@ export default function App() {
         </div>
 
         <div className="flex gap-4 pt-8">
-          <button onClick={() => setPage("Quiz")} className="flex-1 py-4 bg-blue-500 text-white rounded-2xl font-black shadow-[0_4px_0_#2563eb] hover:translate-y-1 hover:shadow-[0_2px_0_#2563eb] transition-all">Take Quiz</button>
-          <button onClick={() => setPage("Scenarios")} className="flex-1 py-4 bg-purple-500 text-white rounded-2xl font-black shadow-[0_4px_0_#7c3aed] hover:translate-y-1 hover:shadow-[0_2px_0_#7c3aed] transition-all">Try Scenario</button>
+          <button 
+            onClick={markAsComplete}
+            className={`flex-1 py-6 rounded-2xl font-black transition-all hover:scale-[1.02] active:scale-[0.98] ${darkMode ? "bg-[#d289ae] text-white shadow-[0_8px_0_#816cb1]" : "bg-[#2d2020] text-white shadow-[0_8px_0_#b8c4a4]"}`}
+          >
+            Complete Lesson & Return to Map
+          </button>
         </div>
       </div>
     );
@@ -581,7 +603,7 @@ export default function App() {
         {[
           { label: "Total XP", value: xp, color: "text-yellow-500" },
           { label: "Accuracy", value: totalAnswered > 0 ? `${Math.round((correctAnswered / totalAnswered) * 100)}%` : "N/A", color: "text-green-500" },
-          { label: "Answered", value: totalAnswered, color: "text-blue-500" },
+          { label: "Lessons Done", value: completedNodes.length, color: "text-blue-500" },
           { label: "Streak", value: `${streak} days`, color: "text-orange-500" },
         ].map((stat, i) => (
           <div key={i} className={`p-6 rounded-3xl border-4 text-center ${darkMode ? "bg-[#2a2840] border-[#816cb1]" : "bg-white border-[#b8c4a4]"}`}>
@@ -595,8 +617,8 @@ export default function App() {
         <h3 className="text-2xl font-black">Badges Earned</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { id: "starter", label: "First 100 XP", icon: "🥉", unlocked: xp >= 100 },
-            { id: "club", label: "500 XP Club", icon: "🥇", unlocked: xp >= 500 },
+            { id: "starter", label: "First Lesson", icon: "🥉", unlocked: completedNodes.length > 0 },
+            { id: "club", label: "5 Lessons", icon: "🥇", unlocked: completedNodes.length >= 5 },
             { id: "quiz", label: "Quiz Starter", icon: "📝", unlocked: correctAnswered >= 5 },
             { id: "master", label: "Quiz Master", icon: "🎓", unlocked: correctAnswered >= 20 },
           ].map((badge) => (
@@ -617,14 +639,7 @@ export default function App() {
           onClick={() => {
             if (confirm("Are you sure you want to reset all progress?")) {
               localStorage.clear();
-              setXp(0);
-              setTotalAnswered(0);
-              setCorrectAnswered(0);
-              setQuizAnswers({});
-              setScenarioRevealed({});
-              setFibSubmitted({});
-              setDailyDone([]);
-              setStreak(0);
+              window.location.reload();
             }
           }}
           className="px-6 py-3 bg-red-100 text-red-600 rounded-xl font-bold hover:bg-red-200 transition-all"
@@ -763,7 +778,7 @@ export default function App() {
   const renderContent = () => {
     switch (page) {
       case "Home": return renderHome();
-      case "Daily Lesson": return renderLesson();
+      case "Daily Lesson": return renderDailyLesson();
       case "Quiz": return renderQuiz();
       case "Scenarios": return renderScenarios();
       case "Fill in the Blanks": return renderFillInBlanks();
@@ -775,16 +790,16 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen flex transition-colors duration-300 ${darkMode ? "bg-[#1e1c2e] text-[#e3e1c8]" : "bg-[#f9f6e3] text-[#2d2020]"}`}>
+    <div className={`min-h-screen flex transition-colors duration-300 ${darkMode ? "bg-[#0f0e1c] text-[#e2d6fa]" : "bg-[#f9f6e3] text-[#2d2020]"}`}>
       {renderSidebar()}
-      <main className="flex-1 p-12 overflow-y-auto">
+      <main className="flex-1 p-8 md:p-12 overflow-y-auto">
         <AnimatePresence mode="wait">
           <motion.div
             key={page + topic + level}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
           >
             {renderContent()}
           </motion.div>
