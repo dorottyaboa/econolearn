@@ -16,9 +16,9 @@ if "level" not in st.session_state: st.session_state.level = "Beginner"
 if "streak" not in st.session_state: st.session_state.streak = 0
 
 # ─────────────────────────────────────────────
-# CSS OVERHAUL (NEW COLOR PALETTE)
+# CSS OVERHAUL (DARK GREEN SIDEBAR & NO SQUARES)
 # ─────────────────────────────────────────────
-# Olivine: #A4BD84 | Straw: #D3DC92 | Vanilla: #FDF1A8 | Melon: #FCAB92 | Old Rose: #B17C82
+# Colors: Dark Green Sidebar | Vanilla BG | Melon Buttons | Old Rose Text
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap');
@@ -27,74 +27,91 @@ st.markdown("""
     html, body, [class*="st-emotion-cache"], .stApp {
         font-family: 'Nunito', sans-serif;
         background-color: #FDF1A8 !important;
-        color: #2D1B1E !important; /* Very dark Old Rose for text readability */
+        color: #2D1B1E !important; 
     }
 
-    /* Sidebar Styling (Darker Olivine) */
+    /* 🌲 DARK GREEN SIDEBAR */
     section[data-testid="stSidebar"] {
-        background-color: #8da66d !important; /* Darkened Olivine */
-        border-right: 3px solid #B17C82;
+        background-color: #1b4332 !important; /* Deep Forest Green */
+        border-right: 5px solid #B17C82;
     }
     
-    /* Ensure sidebar text is readable */
-    section[data-testid="stSidebar"] * {
-        color: #FDF1A8 !important; /* Vanilla text on green background */
+    /* Sidebar Text (Vanilla) */
+    section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p,
+    section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] span,
+    section[data-testid="stSidebar"] h1, section[data-testid="stSidebar"] h2, section[data-testid="stSidebar"] h3 {
+        color: #FDF1A8 !important;
+        font-weight: 700;
     }
 
-    /* Comic Style Cards (Straw background with Olivine border) */
+    /* Comic Style Cards (Straw background) */
     .card { 
         background: #D3DC92 !important; 
         border-radius: 30px; 
         padding: 1.5rem; 
         margin-bottom: 1.5rem; 
         border: 5px solid #A4BD84;
-        box-shadow: 8px 8px 0px #B17C82; /* Old Rose Shadow */
+        box-shadow: 10px 10px 0px #B17C82; 
     }
     
-    .card b, .card span, .card h3 {
+    .card b, .card span, .card h3, .card p {
         color: #2D1B1E !important;
     }
 
-    /* 🎯 BUTTONS (Melon background, Old Rose shadow) */
+    /* 🎯 BUTTON FIX: No white squares, no keyboard icons, BOLD text */
     .stButton > button {
         border-radius: 25px !important;
         border: none !important;
         background-color: #FCAB92 !important; /* Melon */
-        padding: 0.6rem 1rem !important;
+        padding: 0.8rem 1rem !important;
         box-shadow: 0px 6px 0px #B17C82 !important; /* Old Rose */
         transition: all 0.1s ease !important;
         width: 100% !important;
-        min-height: 70px !important;
+        min-height: 85px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
+    /* Kill the white boxes and keyboard labels inside buttons */
     .stButton > button div, 
     .stButton > button p, 
-    .stButton > button span {
+    .stButton > button span,
+    .stButton > button div[data-testid="stMarkdownContainer"],
+    .stButton > button div[data-testid="stButton-label"] {
         background-color: transparent !important;
-        color: #2D1B1E !important; /* Dark text for contrast on Melon */
+        background: transparent !important;
+        color: #2D1B1E !important; /* Dark text */
         font-weight: 800 !important;
         font-size: 1.1rem !important;
+        border: none !important;
+        box-shadow: none !important;
+        line-height: 1.2 !important;
     }
 
-    /* Hide Streamlit Button Artifacts */
-    .stButton > button small, .stButton > button svg {
+    /* Absolutely hide the keyboard shortcut/double icon */
+    .stButton > button small, 
+    .stButton > button svg,
+    .stButton > button span[data-testid="stShortcut"] {
         display: none !important;
+        visibility: hidden !important;
     }
     
     .stButton > button:hover {
         transform: translateY(2px) !important;
         box-shadow: 0px 3px 0px #B17C82 !important;
-        background-color: #e8957d !important; /* Darkened Melon */
+        background-color: #FCAB92 !important;
+        filter: brightness(0.9);
     }
 
     .main-title { 
         font-size: 3.5rem; font-weight: 800; color: #B17C82 !important; 
-        text-shadow: 2px 2px 0px #A4BD84; text-align: center; margin-bottom: 10px;
+        text-shadow: 3px 3px 0px #A4BD84; text-align: center;
     }
     
     .subtitle { 
-        color: #8da66d !important; font-size: 1.3rem; text-align: center;
-        font-weight: 700; margin-bottom: 2rem;
+        color: #1b4332 !important; font-size: 1.3rem; text-align: center;
+        font-weight: 800; margin-bottom: 2rem;
     }
 
     /* XP Bar */
@@ -145,15 +162,12 @@ with st.sidebar:
     if st.button("Beginner Level"): st.session_state.level = "Beginner"
     if st.button("Advanced Level"): st.session_state.level = "Advanced"
 
-    st.markdown("---")
-    st.caption("Tip: Use the arrow at the top to hide this sidebar!")
-
 # ─────────────────────────────────────────────
 # MAIN PAGES
 # ─────────────────────────────────────────────
 if st.session_state.page == "Home":
     st.markdown('<p class="main-title">📈 EconoLearn</p>', unsafe_allow_html=True)
-    st.markdown('<p class="subtitle">Your economic adventure begins here!</p>', unsafe_allow_html=True)
+    st.markdown('<p class="subtitle">Master the world of money!</p>', unsafe_allow_html=True)
 
     # Dashboard
     c1, c2, c3 = st.columns(3)
@@ -165,6 +179,7 @@ if st.session_state.page == "Home":
     topic_cols = st.columns(5)
     for i, (t, icon) in enumerate(TOPICS.items()):
         with topic_cols[i % 5]:
+            # Labels are bolded and emojis included
             if st.button(f"{icon}\n{t}", key=f"btn_{t}"):
                 st.session_state.topic = t
                 st.session_state.page = "Daily Lesson"
@@ -180,7 +195,7 @@ elif st.session_state.page == "Daily Lesson":
 
 elif st.session_state.page == "Quiz":
     st.markdown("<p class='main-title'>❓ Quiz Time</p>", unsafe_allow_html=True)
-    st.markdown("<div class='card'>Test your knowledge! (Quiz module loading...)</div>", unsafe_allow_html=True)
+    st.markdown("<div class='card'>Quiz module loading...</div>", unsafe_allow_html=True)
     if st.button("← Back to Map"):
         st.session_state.page = "Home"
         st.rerun()
