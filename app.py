@@ -1,7 +1,12 @@
 import streamlit as st
 import random
 import hashlib
+import sqlite3
+import uuid
+import json
+import os
 from datetime import date
+from urllib.parse import urlencode
 
 st.set_page_config(page_title="EconoLearn", page_icon="📈", layout="wide")
 
@@ -730,6 +735,220 @@ CONCEPT_CONNECTIONS = [
 ]
 
 # ─────────────────────────────────────────────
+# DATABASE & AUTH
+# ─────────────────────────────────────────────
+
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "econolearn.db")
+
+def db_init():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("""CREATE TABLE IF NOT EXISTS users (
+        id TEXT PRIMARY KEY,
+        email TEXT UNIQUE NOT NULL,
+        name TEXT,
+        password_hash TEXT,
+        google_id TEXT,
+        apple_id TEXT,
+        created_at TEXT DEFAULT (datetime('now'))
+    )""")
+    c.execute("""CREATE TABLE IF NOT EXISTS progress (
+        user_id TEXT PRIMARY KEY,
+        xp INTEGER DEFAULT 0,
+        level TEXT DEFAULT 'Beginner',
+        topic TEXT DEFAULT 'Supply & Demand',
+        total_answered INTEGER DEFAULT 0,
+        correct_answered INTEGER DEFAULT 0,
+        streak INTEGER DEFAULT 0,
+        last_active TEXT,
+        daily_done TEXT DEFAULT '[]',
+        quiz_answered TEXT DEFAULT '{}',
+        badges TEXT DEFAULT '[]',
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    )""")
+    conn.commit()
+    conn.close()
+
+db_init()
+
+def _db_row_to_user(row):
+    if not row: return None
+    return {"id": row[0], "email": row[1], "name": row[2],
+            "password_hash": row[3], "google_id": row[4], "apple_id": row[5]}
+
+def db_get_user_by_email(email):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("SELECT * FROM users WHERE email = ?", (email.lower().strip(),))
+    row = c.fetchone(); conn.close()
+    return _db_row_to_user(row)
+
+def db_get_user_by_google_id(google_id):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("SELECT * FROM users WHERE google_id = ?", (google_id,))
+    row = c.fetchone(); conn.close()
+    return _db_row_to_user(row)
+
+def db_create_user(email, name, password_hash=None, google_id=None, apple_id=None):
+    user_id = str(uuid.uuid4())
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("INSERT INTO users (id, email, name, password_hash, google_id, apple_id) VALUES (?,?,?,?,?,?)",
+              (user_id, email.lower().strip(), name, password_hash, google_id, apple_id))
+    c.execute("INSERT INTO progress (user_id) VALUES (?)", (user_id,))
+    conn.commit(); conn.close()
+    return user_id
+
+def db_save_progress(user_id):
+    ss = st.session_state
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute("""INSERT OR REPLACE INTO progress
+        (user_id, xp, level, topic, total_answered, correct_answered,
+         streak, last_active, daily_done, quiz_answered, badges)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+        (user_id, ss.xp, ss.level, ss.topic, ss.total_answered, ss.correct_answered,
+         ss.streak, str(date.today()),
+         json.dumps(list(ss.daily_done)),
+         json.dumps(ss.quiz_answered),
+         json.dumps(ss.badges)))
+    conn.commit(); conn.close()
+
+def db_load_progress(user_id):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("SELECT * FROM progress WHERE user_id = ?", (user_id,))
+    row = c.fetchone(); conn.close()
+    if row:
+        return {"xp": row[1], "level": row[2], "topic": row[3],
+                "total_answered": row[4], "correct_answered": row[5],
+                "streak": row[6], "last_active": row[7],
+                "daily_done": set(json.loads(row[8] or "[]")),
+                "quiz_answered": json.loads(row[9] or "{}"),
+                "badges": json.loads(row[10] or "[]")}
+    return None
+
+def hash_password(password):
+    salt = os.urandom(32)
+    key = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, 100_000)
+    return (salt + key).hex()
+
+def verify_password(password, stored_hex):
+    try:
+        stored = bytes.fromhex(stored_hex)
+        salt, stored_key = stored[:32], stored[32:]
+        return hashlib.pbkdf2_hmac("sha256", password.encode(), salt, 100_000) == stored_key
+    except Exception:
+        return False
+
+def get_user_initials(name):
+    parts = (name or "?").strip().split()
+    if len(parts) >= 2: return (parts[0][0] + parts[-1][0]).upper()
+    return parts[0][:2].upper() if parts else "?"
+
+def _set_logged_in(user):
+    st.session_state.logged_in  = True
+    st.session_state.user_id    = user["id"]
+    st.session_state.user_name  = user.get("name") or user.get("email", "").split("@")[0]
+    st.session_state.user_email = user.get("email", "")
+    st.session_state.user_avatar = get_user_initials(st.session_state.user_name)
+    prog = db_load_progress(user["id"])
+    if prog:
+        for k, v in prog.items():
+            st.session_state[k] = v
+
+# ── Google OAuth ─────────────────────────────
+def _google_creds():
+    try:
+        g = st.secrets["google"]
+        return (g.get("client_id",""), g.get("client_secret",""),
+                g.get("redirect_uri","http://localhost:8501"))
+    except Exception:
+        return (os.environ.get("GOOGLE_CLIENT_ID",""),
+                os.environ.get("GOOGLE_CLIENT_SECRET",""),
+                os.environ.get("GOOGLE_REDIRECT_URI","http://localhost:8501"))
+
+def get_google_auth_url():
+    cid, _, ruri = _google_creds()
+    if not cid: return None
+    return "https://accounts.google.com/o/oauth2/auth?" + urlencode({
+        "client_id": cid, "redirect_uri": ruri,
+        "response_type": "code", "scope": "openid email profile",
+        "access_type": "offline", "state": "google_oauth",
+        "prompt": "select_account",
+    })
+
+def handle_google_callback(code):
+    cid, csec, ruri = _google_creds()
+    if not cid: return None
+    try:
+        import requests
+        tokens = requests.post("https://oauth2.googleapis.com/token", data={
+            "code": code, "client_id": cid, "client_secret": csec,
+            "redirect_uri": ruri, "grant_type": "authorization_code"
+        }, timeout=10).json()
+        if "access_token" not in tokens: return None
+        return requests.get("https://www.googleapis.com/oauth2/v3/userinfo",
+            headers={"Authorization": f"Bearer {tokens['access_token']}"}, timeout=10).json()
+    except Exception:
+        return None
+
+def login_with_google_user(guser):
+    gid   = guser.get("sub", "")
+    email = guser.get("email", "")
+    name  = guser.get("name", email.split("@")[0])
+    user  = db_get_user_by_google_id(gid)
+    if not user:
+        user = db_get_user_by_email(email)
+        if user:
+            conn = sqlite3.connect(DB_PATH)
+            conn.execute("UPDATE users SET google_id=? WHERE id=?", (gid, user["id"]))
+            conn.commit(); conn.close()
+        else:
+            uid  = db_create_user(email, name, google_id=gid)
+            user = {"id": uid, "email": email, "name": name}
+    _set_logged_in(user)
+
+# ── Apple Sign In ─────────────────────────────
+def _apple_creds():
+    try:
+        a = st.secrets["apple"]
+        return (a.get("client_id",""), a.get("team_id",""),
+                a.get("key_id",""), a.get("private_key",""),
+                a.get("redirect_uri","http://localhost:8501"))
+    except Exception:
+        return ("","","","","")
+
+def get_apple_auth_url():
+    cid, _, _, _, ruri = _apple_creds()
+    if not cid: return None
+    return "https://appleid.apple.com/auth/authorize?" + urlencode({
+        "client_id": cid, "redirect_uri": ruri,
+        "response_type": "code", "scope": "name email",
+        "response_mode": "query", "state": "apple_oauth",
+    })
+
+def handle_apple_callback(code):
+    cid, team_id, key_id, private_key, ruri = _apple_creds()
+    if not cid or not private_key: return None
+    try:
+        import jwt as pyjwt, time, requests
+        now = int(time.time())
+        client_secret = pyjwt.encode({
+            "iss": team_id, "iat": now, "exp": now + 86400,
+            "aud": "https://appleid.apple.com", "sub": cid,
+        }, private_key, algorithm="ES256", headers={"kid": key_id})
+        tokens = requests.post("https://appleid.apple.com/auth/token", data={
+            "client_id": cid, "client_secret": client_secret,
+            "code": code, "grant_type": "authorization_code", "redirect_uri": ruri,
+        }, timeout=10).json()
+        if "id_token" not in tokens: return None
+        claims = pyjwt.decode(tokens["id_token"], options={"verify_signature": False})
+        return {"sub": claims.get("sub",""), "email": claims.get("email","")}
+    except Exception:
+        return None
+
+# ─────────────────────────────────────────────
 # SESSION STATE
 # ─────────────────────────────────────────────
 
@@ -739,6 +958,10 @@ def init_state():
         "total_answered": 0, "correct_answered": 0, "streak": 0,
         "daily_done": set(), "quiz_answered": {}, "xp": 0, "badges": [],
         "dark_mode": False,
+        # auth
+        "logged_in": False, "user_id": None, "user_name": None,
+        "user_email": None, "user_avatar": None, "auth_mode": "login",
+        "auth_error": "", "auth_success": "",
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -759,6 +982,8 @@ def award_xp(amount):
     if st.session_state.correct_answered >= 5 and "Quiz Starter" not in badges: badges.append("Quiz Starter")
     if st.session_state.correct_answered >= 20 and "Quiz Master" not in badges: badges.append("Quiz Master")
     if st.session_state.streak >= 3 and "3-Day Streak" not in badges: badges.append("3-Day Streak")
+    if st.session_state.logged_in and st.session_state.user_id:
+        db_save_progress(st.session_state.user_id)
 
 BADGE_ICONS = {"First 100 XP": "🥉", "500 XP Club": "🥇", "Quiz Starter": "📝", "Quiz Master": "🎓", "3-Day Streak": "🔥"}
 
@@ -823,6 +1048,10 @@ def get_theme(dark: bool) -> dict:
             CGOLD_B   = "#e8ae7d",
             CGOLD_SH  = "#1e1808",
             TOGGLE_SH = "#514d86",
+            BG_GRAD   = "#2a2840",
+            CARD_GRAD = "#5e5a9a",
+            LOGIN_CARD= "#2a2840",
+            LOGIN_B   = "#816cb1",
         )
     else:
         # ── Light: warm sage-peach (Palette 6 + 4 + 5) ──
@@ -881,20 +1110,25 @@ def get_theme(dark: bool) -> dict:
             CGOLD_B   = "#e8ae7d",
             CGOLD_SH  = "#a56066",
             TOGGLE_SH = "#4a7a6e",
+            BG_GRAD   = "#ede9d0",
+            CARD_GRAD = "#cfe0c2",
+            LOGIN_CARD= "#f0ede0",
+            LOGIN_B   = "#b8c4a4",
         )
 
 def render_css(T: dict):
     st.markdown(f"""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap');
 
     html, body, .stApp, [class*="appview-container"] {{
         font-family: 'Nunito', sans-serif !important;
-        background-color: {T['BG']} !important;
+        background: linear-gradient(160deg, {T['BG']} 0%, {T['BG_GRAD']} 100%) !important;
+        background-attachment: fixed !important;
         color: {T['TEXT']} !important;
     }}
     .main .block-container {{
-        background-color: {T['BG']} !important;
+        background-color: transparent !important;
         padding-top: 2rem !important;
     }}
     p, span, label, li, h1, h2, h3, h4, strong, em {{
@@ -914,13 +1148,15 @@ def render_css(T: dict):
         font-family: 'Nunito', sans-serif !important;
         font-weight: 800 !important;
         font-size: 0.95rem !important;
+        letter-spacing: 0.02em !important;
         color: {T['BTN_TXT']} !important;
+        background: linear-gradient(135deg, {T['BTN_BG']} 0%, {T['BTN_SH']}44 200%) !important;
         background-color: {T['BTN_BG']} !important;
         border: none !important;
-        border-radius: 20px !important;
-        padding: 0.6rem 1rem !important;
-        box-shadow: 0px 5px 0px {T['BTN_SH']} !important;
-        transition: transform 0.1s, box-shadow 0.1s !important;
+        border-radius: 16px !important;
+        padding: 0.65rem 1.1rem !important;
+        box-shadow: 0 3px 0 {T['BTN_SH']}, 0 8px 20px rgba(0,0,0,0.07) !important;
+        transition: transform 0.12s ease, box-shadow 0.12s ease !important;
         width: 100% !important;
         line-height: 1 !important;
         display: flex !important;
@@ -959,11 +1195,11 @@ def render_css(T: dict):
     .stButton > button svg,
     .stButton > button [class*="shortcut"] {{ display: none !important; }}
     .stButton > button:hover {{
-        transform: translateY(3px) !important;
-        box-shadow: 0px 2px 0px {T['BTN_SH']} !important;
+        transform: translateY(2px) !important;
+        box-shadow: 0 1px 0 {T['BTN_SH']}, 0 4px 10px rgba(0,0,0,0.05) !important;
     }}
     .stButton > button:active {{
-        transform: translateY(5px) !important;
+        transform: translateY(3px) !important;
         box-shadow: none !important;
     }}
 
@@ -1057,12 +1293,12 @@ def render_css(T: dict):
 
     /* ── CARDS ── */
     .card {{
-        background: {T['CARD']} !important;
-        border-radius: 20px !important;
-        padding: 1.2rem 1.5rem !important;
+        background: linear-gradient(135deg, {T['CARD']} 0%, {T['CARD_GRAD']} 100%) !important;
+        border-radius: 22px !important;
+        padding: 1.3rem 1.6rem !important;
         margin-bottom: 1rem !important;
-        border: 4px solid {T['CARD_B']} !important;
-        box-shadow: 6px 6px 0px {T['CARD_SH']} !important;
+        border: 3px solid {T['CARD_B']} !important;
+        box-shadow: 4px 4px 0 {T['CARD_SH']}, 0 10px 30px rgba(0,0,0,0.05) !important;
         color: {T['TEXT']} !important;
     }}
     .card * {{ color: {T['TEXT']} !important; }}
@@ -1072,10 +1308,12 @@ def render_css(T: dict):
 
     /* ── TITLES ── */
     .main-title {{
+        font-family: 'Playfair Display', serif !important;
         font-size: 3rem; font-weight: 800;
         color: {T['TITLE_COL']} !important;
         text-shadow: 3px 3px 0px {T['TITLE_SH']};
         text-align: center; margin-bottom: 0.2rem;
+        letter-spacing: -0.01em;
     }}
     .subtitle {{
         color: {T['SUB_COL']} !important;
@@ -1157,11 +1395,221 @@ def render_css(T: dict):
         border: 3px solid {T['CARD_B']} !important; border-radius: 12px !important;
         color: {T['TEXT']} !important; font-family: 'Nunito', sans-serif !important; font-weight: 700 !important;
     }}
+
+    /* ── LOGIN PAGE ── */
+    .login-wrap {{
+        max-width: 460px; margin: 1.5rem auto 0 auto;
+    }}
+    .login-card {{
+        background: linear-gradient(140deg, {T['LOGIN_CARD']} 0%, {T['CARD']} 100%) !important;
+        border: 3px solid {T['LOGIN_B']} !important;
+        border-radius: 28px !important;
+        padding: 2.5rem 2.2rem 2rem 2.2rem !important;
+        box-shadow: 5px 5px 0 {T['CARD_SH']}, 0 24px 60px rgba(0,0,0,0.10) !important;
+    }}
+    .login-logo {{
+        font-family: 'Playfair Display', serif;
+        font-size: 2.4rem; font-weight: 800;
+        color: {T['TITLE_COL']} !important;
+        text-align: center; text-shadow: 2px 2px 0 {T['TITLE_SH']};
+        margin-bottom: 0.2rem; letter-spacing: -0.01em;
+    }}
+    .login-tagline {{
+        color: {T['SUB_COL']} !important;
+        text-align: center; font-size: 0.95rem; font-weight: 600;
+        margin-bottom: 1.8rem;
+    }}
+    .social-btn {{
+        display: flex !important; align-items: center !important;
+        justify-content: center !important; gap: 10px !important;
+        width: 100% !important; padding: 0.72rem 1.2rem !important;
+        border-radius: 14px !important; font-weight: 700 !important;
+        font-size: 0.95rem !important; font-family: 'Nunito', sans-serif !important;
+        cursor: pointer !important; text-decoration: none !important;
+        transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+        box-sizing: border-box !important;
+    }}
+    .google-btn {{
+        background: #ffffff !important; color: #3c3c3c !important;
+        border: 2px solid #e0e0e0 !important;
+        box-shadow: 0 3px 0 #c8c8c8, 0 6px 16px rgba(0,0,0,0.07) !important;
+    }}
+    .google-btn:hover {{ transform: translateY(2px) !important; box-shadow: 0 1px 0 #c8c8c8 !important; }}
+    .apple-btn {{
+        background: #1a1a1a !important; color: #ffffff !important;
+        border: 2px solid #1a1a1a !important;
+        box-shadow: 0 3px 0 #000, 0 6px 16px rgba(0,0,0,0.18) !important;
+    }}
+    .apple-btn:hover {{ transform: translateY(2px) !important; box-shadow: 0 1px 0 #000 !important; }}
+    .login-divider {{
+        display: flex; align-items: center; gap: 14px;
+        margin: 1.2rem 0; color: {T['TEXT']}88 !important; font-size: 0.85rem; font-weight: 700;
+    }}
+    .login-divider::before, .login-divider::after {{
+        content: ''; flex: 1; height: 1px; background: {T['CARD_B']};
+    }}
+    .login-toggle {{
+        text-align: center; margin-top: 0.6rem;
+        color: {T['TEXT']}99 !important; font-size: 0.88rem;
+    }}
+    .login-error {{
+        background: {T['CR_BG']} !important; border: 2px solid {T['CR_B']} !important;
+        border-radius: 12px !important; padding: 0.7rem 1rem !important;
+        color: {T['TEXT']} !important; font-weight: 700 !important; margin-bottom: 0.8rem;
+    }}
+    .login-success {{
+        background: {T['CG_BG']} !important; border: 2px solid {T['CG_B']} !important;
+        border-radius: 12px !important; padding: 0.7rem 1rem !important;
+        color: {T['TEXT']} !important; font-weight: 700 !important; margin-bottom: 0.8rem;
+    }}
+    .user-avatar {{
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 34px; height: 34px; border-radius: 50%;
+        background: {T['BTN_BG']} !important; color: {T['BTN_TXT']} !important;
+        font-weight: 800; font-size: 0.85rem; border: 2px solid {T['BTN_SH']};
+        flex-shrink: 0;
+    }}
 </style>
 """, unsafe_allow_html=True)
 
 T = get_theme(st.session_state.dark_mode)
 render_css(T)
+
+# ─────────────────────────────────────────────
+# OAUTH CALLBACKS (must run before any render)
+# ─────────────────────────────────────────────
+_qp = st.query_params
+if "code" in _qp and not st.session_state.logged_in:
+    _state = _qp.get("state", "")
+    _code  = _qp["code"]
+    if _state == "google_oauth":
+        _guser = handle_google_callback(_code)
+        if _guser:
+            login_with_google_user(_guser)
+            st.query_params.clear()
+            st.rerun()
+        else:
+            st.session_state.auth_error = "Google sign-in failed. Please try again."
+            st.query_params.clear()
+    elif _state == "apple_oauth":
+        _auser = handle_apple_callback(_code)
+        if _auser:
+            _email = _auser.get("email", "")
+            _user  = db_get_user_by_email(_email) if _email else None
+            if not _user and _email:
+                _uid  = db_create_user(_email, _email.split("@")[0])
+                _user = {"id": _uid, "email": _email, "name": _email.split("@")[0]}
+            if _user:
+                _set_logged_in(_user)
+                st.query_params.clear()
+                st.rerun()
+        else:
+            st.session_state.auth_error = "Apple sign-in failed. Please try again."
+            st.query_params.clear()
+
+# ─────────────────────────────────────────────
+# LOGIN PAGE
+# ─────────────────────────────────────────────
+def render_login_page():
+    mode = st.session_state.auth_mode
+
+    _, col, _ = st.columns([1, 6, 1])
+    with col:
+        st.markdown("<div class='login-wrap'>", unsafe_allow_html=True)
+        st.markdown("<div class='login-card'>", unsafe_allow_html=True)
+
+        st.markdown("<div class='login-logo'>📈 EconoLearn</div>", unsafe_allow_html=True)
+        st.markdown("<div class='login-tagline'>Master economics — one lesson at a time.</div>", unsafe_allow_html=True)
+
+        if st.session_state.auth_error:
+            st.markdown(f"<div class='login-error'>⚠️ {st.session_state.auth_error}</div>", unsafe_allow_html=True)
+        if st.session_state.auth_success:
+            st.markdown(f"<div class='login-success'>✅ {st.session_state.auth_success}</div>", unsafe_allow_html=True)
+
+        # ── Social sign-in buttons ──
+        google_url = get_google_auth_url()
+        apple_url  = get_apple_auth_url()
+
+        if google_url:
+            st.markdown(f"""<a href="{google_url}" class="social-btn google-btn" target="_self">
+                <svg width="18" height="18" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Continue with Google</a>""", unsafe_allow_html=True)
+        else:
+            st.markdown("<div class='social-btn google-btn' style='opacity:0.45;cursor:not-allowed;'>🔑 Google (add credentials in secrets.toml)</div>", unsafe_allow_html=True)
+
+        st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+
+        if apple_url:
+            st.markdown(f"""<a href="{apple_url}" class="social-btn apple-btn" target="_self">
+                 Continue with Apple</a>""", unsafe_allow_html=True)
+        else:
+            st.markdown("<div class='social-btn apple-btn' style='opacity:0.45;cursor:not-allowed;'> Apple (add credentials in secrets.toml)</div>", unsafe_allow_html=True)
+
+        st.markdown("<div class='login-divider'>or</div>", unsafe_allow_html=True)
+
+        # ── Email / password form ──
+        if mode == "register":
+            reg_name = st.text_input("Your name", placeholder="Ada Lovelace", key="reg_name")
+        auth_email = st.text_input("Email", placeholder="you@example.com", key="auth_email")
+        auth_pass  = st.text_input("Password", type="password",
+                                   placeholder="Min 8 characters", key="auth_password")
+
+        if mode == "login":
+            if st.button("Sign In →", key="btn_login"):
+                st.session_state.auth_error = ""
+                _u = db_get_user_by_email(auth_email)
+                if not _u or not _u.get("password_hash"):
+                    st.session_state.auth_error = "No account found with that email."
+                    st.rerun()
+                elif not verify_password(auth_pass, _u["password_hash"]):
+                    st.session_state.auth_error = "Wrong password. Try again."
+                    st.rerun()
+                else:
+                    _set_logged_in(_u)
+                    st.session_state.auth_success = ""
+                    st.rerun()
+            st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+            st.markdown("<div class='login-toggle'>Don't have an account?</div>", unsafe_allow_html=True)
+            if st.button("Create a free account", key="to_register"):
+                st.session_state.auth_mode = "register"
+                st.session_state.auth_error = ""
+                st.rerun()
+        else:
+            if st.button("Create Account →", key="btn_register"):
+                st.session_state.auth_error = ""
+                _name = reg_name.strip() if reg_name.strip() else auth_email.split("@")[0]
+                if len(auth_pass) < 8:
+                    st.session_state.auth_error = "Password must be at least 8 characters."
+                    st.rerun()
+                elif "@" not in auth_email or "." not in auth_email:
+                    st.session_state.auth_error = "Please enter a valid email address."
+                    st.rerun()
+                elif db_get_user_by_email(auth_email):
+                    st.session_state.auth_error = "An account with this email already exists."
+                    st.rerun()
+                else:
+                    _uid = db_create_user(auth_email, _name, password_hash=hash_password(auth_pass))
+                    _set_logged_in({"id": _uid, "email": auth_email, "name": _name})
+                    st.session_state.auth_success = f"Welcome, {_name}! Account created."
+                    st.session_state.auth_mode = "login"
+                    st.rerun()
+            st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+            st.markdown("<div class='login-toggle'>Already have an account?</div>", unsafe_allow_html=True)
+            if st.button("Sign in instead", key="to_login"):
+                st.session_state.auth_mode = "login"
+                st.session_state.auth_error = ""
+                st.rerun()
+
+        st.markdown("</div></div>", unsafe_allow_html=True)
+
+if not st.session_state.logged_in:
+    render_login_page()
+    st.stop()
 
 # ─────────────────────────────────────────────
 # SIDEBAR
@@ -1170,11 +1618,32 @@ with st.sidebar:
     dark = st.session_state.dark_mode
     col_title, col_toggle = st.columns([5, 1])
     with col_title:
-        st.markdown("<h2 style='color:#FDF6E3 !important;margin:0;padding-top:4px;'>📈 EconoLearn</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='color:#FDF6E3 !important;margin:0;padding-top:4px;font-family:Playfair Display,serif;'>📈 EconoLearn</h2>", unsafe_allow_html=True)
     with col_toggle:
         if st.button("☀️" if dark else "🌙", key="dark_toggle"):
             st.session_state.dark_mode = not dark
             st.rerun()
+    st.markdown("---")
+
+    # ── User info + logout ──
+    _av   = st.session_state.user_avatar or "?"
+    _name = st.session_state.user_name or "User"
+    _email = st.session_state.user_email or ""
+    st.markdown(f"""<div style='display:flex;align-items:center;gap:10px;margin-bottom:6px;'>
+        <div class='user-avatar'>{_av}</div>
+        <div>
+          <div style='color:#FDF6E3 !important;font-weight:800;font-size:0.9rem;line-height:1.2;'>{_name}</div>
+          <div style='color:#FDF6E3aa !important;font-size:0.75rem;line-height:1.2;'>{_email}</div>
+        </div>
+    </div>""", unsafe_allow_html=True)
+    if st.button("🚪 Log out", key="btn_logout"):
+        if st.session_state.user_id:
+            db_save_progress(st.session_state.user_id)
+        for k in ["logged_in","user_id","user_name","user_email","user_avatar",
+                  "xp","level","topic","total_answered","correct_answered","streak",
+                  "daily_done","quiz_answered","badges","page"]:
+            if k in st.session_state: del st.session_state[k]
+        st.rerun()
     st.markdown("---")
 
     xp = st.session_state.xp
@@ -1532,5 +2001,7 @@ elif page == "My Progress":
             st.session_state[k] = 0
         for k in ["daily_done", "quiz_answered", "badges"]:
             st.session_state[k] = set() if k == "daily_done" else ([] if k == "badges" else {})
+        if st.session_state.logged_in and st.session_state.user_id:
+            db_save_progress(st.session_state.user_id)
         st.success("Progress reset.")
         st.rerun()
