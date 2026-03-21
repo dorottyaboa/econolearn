@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx server.ts",
+    "dev": "streamlit run streamlit_app.py --server.port 3000 --server.address 0.0.0.0",
     "build": "vite build",
     "start": "node server.ts",
     "clean": "rm -rf dist",
@@ -18,10 +18,12 @@
     "express": "^4.21.2",
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",
+    "pandas": "^0.0.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
+    "streamlit": "^2.51.2",
     "vite": "^6.2.0"
   },
   "devDependencies": {
