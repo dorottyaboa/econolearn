@@ -72,13 +72,59 @@ export const UNITS: Unit[] = [
   },
   {
     id: "unit-5",
-    title: "Unit 5: Advanced Theory",
-    description: "Master complex market failures, game theory, and modern monetary policy.",
+    title: "Unit 5: Intermediate Policy & Markets",
+    description: "Master transmission mechanisms, debt, and market efficiency.",
+    level: "Intermediate",
+    nodes: [
+      { id: "node-14", title: "Policy Transmission", topic: "Monetary Policy", level: "Intermediate", icon: "🏦" },
+      { id: "node-15", title: "Debt & Crowding Out", topic: "Fiscal Policy", level: "Intermediate", icon: "🏛️" },
+      { id: "node-16", title: "Labor Dynamics", topic: "Labor Markets", level: "Intermediate", icon: "👷" },
+    ]
+  },
+  {
+    id: "unit-6",
+    title: "Unit 6: Intermediate Global & Behavioral",
+    description: "Explore exchange rates, asset pricing, and market cycles.",
+    level: "Intermediate",
+    nodes: [
+      { id: "node-17", title: "Exchange Rates", topic: "Trade & Globalization", level: "Intermediate", icon: "🌍" },
+      { id: "node-18", title: "Asset Pricing", topic: "Financial Markets", level: "Intermediate", icon: "📉" },
+      { id: "node-19", title: "Cycle Indicators", topic: "Business Cycles", level: "Intermediate", icon: "🔄" },
+      { id: "node-20", title: "Decision Biases", topic: "Behavioral Economics", level: "Intermediate", icon: "🧠" },
+    ]
+  },
+  {
+    id: "unit-7",
+    title: "Unit 7: Advanced Theory",
+    description: "Master complex market failures, QE, and endogenous growth.",
     level: "Advanced",
     nodes: [
-      { id: "node-14", title: "Market Failures", topic: "Supply & Demand", level: "Advanced", icon: "🛒" },
-      { id: "node-15", title: "QE & ZIRP", topic: "Inflation & Deflation", level: "Advanced", icon: "💸" },
-      { id: "node-16", title: "Endogenous Growth", topic: "GDP & Growth", level: "Advanced", icon: "📊" },
+      { id: "node-21", title: "Market Failures", topic: "Supply & Demand", level: "Advanced", icon: "🛒" },
+      { id: "node-22", title: "QE & ZIRP", topic: "Inflation & Deflation", level: "Advanced", icon: "💸" },
+      { id: "node-23", title: "Endogenous Growth", topic: "GDP & Growth", level: "Advanced", icon: "📊" },
+    ]
+  },
+  {
+    id: "unit-8",
+    title: "Unit 8: Advanced Policy & Labor",
+    description: "Deep dive into monetary frameworks, multipliers, and labor theory.",
+    level: "Advanced",
+    nodes: [
+      { id: "node-24", title: "Monetary Frameworks", topic: "Monetary Policy", level: "Advanced", icon: "🏦" },
+      { id: "node-25", title: "Fiscal Multipliers", topic: "Fiscal Policy", level: "Advanced", icon: "🏛️" },
+      { id: "node-26", title: "Labor Theory", topic: "Labor Markets", level: "Advanced", icon: "👷" },
+    ]
+  },
+  {
+    id: "unit-9",
+    title: "Unit 9: Advanced Global & Financial",
+    description: "Master value chains, systemic risk, and game theory.",
+    level: "Advanced",
+    nodes: [
+      { id: "node-27", title: "Global Value Chains", topic: "Trade & Globalization", level: "Advanced", icon: "🌍" },
+      { id: "node-28", title: "Systemic Risk", topic: "Financial Markets", level: "Advanced", icon: "📉" },
+      { id: "node-29", title: "Cycle Theory", topic: "Business Cycles", level: "Advanced", icon: "🔄" },
+      { id: "node-30", title: "Advanced Behavioral", topic: "Behavioral Economics", level: "Advanced", icon: "🧠" },
     ]
   }
 ];
@@ -376,8 +422,58 @@ The US Federal Reserve has two main goals:
         "Interest Rate": "The cost of borrowing money",
       },
     },
-    Intermediate: { id: "mp-int", topic: "Monetary Policy", level: "Intermediate", title: "Coming Soon", content: "Intermediate content coming soon.", key_terms: {} },
-    Advanced: { id: "mp-adv", topic: "Monetary Policy", level: "Advanced", title: "Coming Soon", content: "Advanced content coming soon.", key_terms: {} },
+    Intermediate: {
+      id: "mp-int", topic: "Monetary Policy", level: "Intermediate",
+      title: "Transmission Mechanisms & Policy Rules",
+      content: `### How Monetary Policy Transmits
+1. **Interest rate channel**: Lower rates → cheaper credit → more investment/consumption.
+2. **Asset price channel**: Lower rates → stocks/housing rise → wealth effect → more spending.
+3. **Exchange rate channel**: Lower rates → currency depreciates → exports more competitive.
+4. **Credit channel**: Easier lending standards → more borrowing available.
+5. **Expectations channel**: Credible inflation targets anchor expectations.
+
+### The Taylor Rule
+A formula for the "right" interest rate:
+> **Fed Rate = 2% + Inflation + 0.5(Inflation − 2%) + 0.5(Output Gap)**
+
+- If inflation is above 2%, raise rates more aggressively.
+- If unemployment is high (negative output gap), lower rates.
+- Used as a benchmark to evaluate Fed decisions.`,
+      key_terms: {
+        "Taylor Rule": "Formula prescribing interest rates based on inflation and output gap",
+        "Transmission Mechanism": "Channels through which monetary policy affects the economy",
+        ZLB: "Zero Lower Bound — rates can't go significantly below 0%",
+        "Forward Guidance": "Central bank signals about future policy to shape expectations",
+        NIRP: "Negative Interest Rate Policy — charging banks to hold reserves",
+      },
+    },
+    Advanced: {
+      id: "mp-adv", topic: "Monetary Policy", level: "Advanced",
+      title: "Monetary Frameworks & Central Bank Theory",
+      content: `### Inflation Targeting (IT)
+Post-1990 consensus: Central banks should publicly commit to an inflation target.
+- **New Zealand** was first (1989). Now ~40+ countries.
+- Why it works: coordinates expectations → wage/price setters plan around the target → self-reinforcing stability.
+
+### Average Inflation Targeting (AIT)
+Fed's 2020 framework shift:
+- Instead of hitting 2% always, target *average* 2% over time.
+- After undershooting, *allow* inflation to overshoot temporarily.
+- Rationale: flatten the Phillips Curve → need to run economy "hot" to push inflation up.
+
+### The Trilemma (Impossible Trinity)
+A country cannot simultaneously have all three:
+1. **Fixed exchange rate**
+2. **Free capital movement**
+3. **Independent monetary policy**`,
+      key_terms: {
+        "Inflation Targeting": "Explicit public commitment to a numerical inflation target",
+        AIT: "Average Inflation Targeting — allows temporary overshoots after undershooting",
+        "Impossible Trinity": "Can't have fixed exchange rate, free capital, and monetary independence simultaneously",
+        Seigniorage: "Revenue a government earns from issuing currency",
+        Credibility: "Central bank's demonstrated commitment to its stated goals",
+      },
+    },
   },
   "Fiscal Policy": {
     Beginner: {
@@ -399,8 +495,47 @@ The US Federal Reserve has two main goals:
         "Expansionary Policy": "Policy designed to boost economic activity",
       },
     },
-    Intermediate: { id: "fp-int", topic: "Fiscal Policy", level: "Intermediate", title: "Coming Soon", content: "Intermediate content coming soon.", key_terms: {} },
-    Advanced: { id: "fp-adv", topic: "Fiscal Policy", level: "Advanced", title: "Coming Soon", content: "Advanced content coming soon.", key_terms: {} },
+    Intermediate: {
+      id: "fp-int", topic: "Fiscal Policy", level: "Intermediate",
+      title: "Ricardian Equivalence, Debt & Crowding Out",
+      content: `### Ricardian Equivalence (Barro)
+Claim: Deficit spending doesn't stimulate the economy because rational consumers:
+- Know the deficit means *future* tax increases.
+- Save today to pay those future taxes.
+- So fiscal stimulus is completely offset by private saving reduction.
+
+### Crowding Out
+Government borrowing competes with private borrowing:
+- More deficit → more bond issuance → bond prices fall → interest rates rise.
+- Higher interest rates → businesses borrow less → private investment falls.
+- Government "crowds out" private investment.`,
+      key_terms: {
+        "Ricardian Equivalence": "Deficits don't stimulate because consumers save for future taxes",
+        "Crowding Out": "Government borrowing raising interest rates, reducing private investment",
+        "r < g": "Debt is sustainable if interest rate is below GDP growth rate",
+        "Primary Deficit": "Budget deficit excluding interest payments on existing debt",
+        "Automatic Stabilizers": "Tax/spending mechanisms that automatically smooth cycles",
+      },
+    },
+    Advanced: {
+      id: "fp-adv", topic: "Fiscal Policy", level: "Advanced",
+      title: "Fiscal Multipliers, Austerity & Political Economy",
+      content: `### The Size of the Multiplier
+The multiplier is not constant — it depends on:
+- **State of the economy**: Higher during recessions (idle resources) than booms.
+- **Monetary policy**: If rates are at ZLB, monetary policy can't offset fiscal tightening → multiplier is larger.
+- **Openness**: More open economies (more imports) have smaller multipliers (leakage abroad).
+
+### Expansionary Austerity Controversy
+**Alesina & Ardagna (2010)**: Claimed fiscal consolidation (austerity) could be expansionary by boosting confidence and cutting rates.`,
+      key_terms: {
+        "Fiscal Multiplier": "Ratio of change in GDP to change in government spending",
+        "Expansionary Austerity": "Theory that deficit cuts can stimulate growth via confidence",
+        ZLB: "Zero Lower Bound — when rates can't fall further, fiscal multipliers rise",
+        "Helicopter Money": "Direct cash injection from central bank to citizens",
+        "Public Good": "Non-rival and non-excludable good — private market underprovides",
+      },
+    },
   },
   "Labor Markets": {
     Beginner: {
@@ -422,8 +557,57 @@ A price floor on labor. It helps low-wage workers but can lead to fewer jobs if 
         "Human Capital": "Skills and education of workers",
       },
     },
-    Intermediate: { id: "lm-int", topic: "Labor Markets", level: "Intermediate", title: "Coming Soon", content: "Intermediate content coming soon.", key_terms: {} },
-    Advanced: { id: "lm-adv", topic: "Labor Markets", level: "Advanced", title: "Coming Soon", content: "Advanced content coming soon.", key_terms: {} },
+    Intermediate: {
+      id: "lm-int", topic: "Labor Markets", level: "Intermediate",
+      title: "Labor Supply, Efficiency Wages & Unions",
+      content: `### Labor Supply & The Income Effect
+Why do people work?
+- **Substitution Effect**: Higher wage → leisure is more expensive → work more.
+- **Income Effect**: Higher wage → you're richer → want more leisure → work less.
+- At very high wages, the income effect can dominate (backward-bending supply curve).
+
+### Efficiency Wages
+Why do some firms pay *above* market rates?
+- **Reduce turnover**: Workers don't want to lose a high-paying job.
+- **Increase effort**: Workers work harder to justify the pay.
+- **Attract talent**: Better pool of applicants.
+
+### Unions & Collective Bargaining
+Unions act as a monopoly seller of labor, pushing wages up but potentially reducing employment.`,
+      key_terms: {
+        "Efficiency Wage": "Above-market wage paid to increase productivity",
+        "Substitution Effect": "Working more because leisure is relatively more expensive",
+        "Income Effect": "Working less because you can afford more leisure",
+        "Collective Bargaining": "Negotiation between union and employer",
+        Monopsony: "Market with only one buyer (e.g., one big employer in a small town)",
+      },
+    },
+    Advanced: {
+      id: "lm-adv", topic: "Labor Markets", level: "Advanced",
+      title: "Search & Matching Theory (Diamond-Mortensen-Pissarides)",
+      content: `### The DMP Model
+Explains why unemployment and job vacancies coexist:
+- **Matching Function**: $m(u, v)$ — how many matches are formed given $u$ (unemployed) and $v$ (vacancies).
+- **Frictions**: Geography, skill mismatch, and information gaps make matching slow.
+- **Beveridge Curve**: Relationship between unemployment and vacancy rates. A shift outward indicates less efficient matching.
+
+### Skill-Biased Technological Change (SBTC)
+Automation and AI increase demand for high-skill workers while reducing demand for low-skill workers, widening wage inequality.
+
+### Hysteresis in Labor Markets
+Long-term unemployment can become permanent:
+- Skills atrophy.
+- Stigma from employers.
+- Workers lose connection to the labor force.
+- This means a temporary recession can have permanent effects on the natural rate of unemployment.`,
+      key_terms: {
+        "DMP Model": "Search and matching framework for labor markets",
+        "Beveridge Curve": "Inverse relationship between vacancies and unemployment",
+        SBTC: "Skill-Biased Technological Change — tech favoring high-skill labor",
+        Hysteresis: "When temporary shocks have permanent effects",
+        "Reservation Wage": "Lowest wage a worker is willing to accept",
+      },
+    },
   },
   "Trade & Globalization": {
     Beginner: {
@@ -445,8 +629,42 @@ Countries should produce what they are *relatively* best at and trade for the re
         Protectionism: "Shielding domestic industries from foreign competition",
       },
     },
-    Intermediate: { id: "tg-int", topic: "Trade & Globalization", level: "Intermediate", title: "Coming Soon", content: "Intermediate content coming soon.", key_terms: {} },
-    Advanced: { id: "tg-adv", topic: "Trade & Globalization", level: "Advanced", title: "Coming Soon", content: "Advanced content coming soon.", key_terms: {} },
+    Intermediate: {
+      id: "tg-int", topic: "Trade & Globalization", level: "Intermediate",
+      title: "Globalization, Exchange Rates & Trade Policy",
+      content: `### Exchange Rates
+The price of one currency in terms of another.
+- **Appreciation**: Currency buys more foreign currency → exports more expensive, imports cheaper.
+- **Depreciation**: Currency buys less → exports cheaper, imports more expensive.
+
+**Purchasing Power Parity (PPP)**: In the long run, exchange rates adjust so the same basket of goods costs the same everywhere.`,
+      key_terms: {
+        "Exchange Rate": "Price of one currency in terms of another",
+        PPP: "Purchasing Power Parity — equalizes purchasing power across currencies",
+        WTO: "World Trade Organization — sets global trade rules",
+        "Infant Industry": "Young industries needing protection before competing globally",
+        "China Shock": "Concentrated job losses from Chinese import competition",
+      },
+    },
+    Advanced: {
+      id: "tg-adv", topic: "Trade & Globalization", level: "Advanced",
+      title: "Global Value Chains, Currency Wars & Deglobalization",
+      content: `### Global Value Chains (GVCs)
+Modern production is fragmented across countries:
+- iPhone: designed in US, chips from Taiwan, assembled in China, sold globally.
+- **Smiling curve**: Most value captured at design/brand ends; assembly has thin margins.
+
+### Currency Manipulation
+Countries sometimes deliberately **weaken** their currency to boost exports:
+- Buy foreign currency → increase its demand → own currency depreciates.`,
+      key_terms: {
+        GVCs: "Global Value Chains — production fragmented across multiple countries",
+        "Triffin Dilemma": "Reserve currency must run deficits to supply world liquidity, undermining its value",
+        Reshoring: "Moving production back to the home country",
+        "Stolper-Samuelson": "Trade reduces returns to the scarce factor of production",
+        "Beggar-thy-Neighbor": "Policies that gain at others' expense (e.g., competitive devaluation)",
+      },
+    },
   },
   "Financial Markets": {
     Beginner: {
@@ -468,8 +686,45 @@ Generally, higher risk = higher potential return. Diversification (owning many d
         Risk: "Uncertainty about future returns",
       },
     },
-    Intermediate: { id: "fm-int", topic: "Financial Markets", level: "Intermediate", title: "Coming Soon", content: "Intermediate content coming soon.", key_terms: {} },
-    Advanced: { id: "fm-adv", topic: "Financial Markets", level: "Advanced", title: "Coming Soon", content: "Advanced content coming soon.", key_terms: {} },
+    Intermediate: {
+      id: "fm-int", topic: "Financial Markets", level: "Intermediate",
+      title: "Asset Pricing, Bubbles & Market Efficiency",
+      content: `### Efficient Market Hypothesis (EMH)
+Eugene Fama: All available information is already reflected in asset prices.
+- **Weak form**: Past prices can't predict future prices.
+- **Semi-strong**: All public information is priced in.
+- **Strong form**: Even private information is priced in.
+
+### The CAPM
+Expected return = Risk-free rate + Beta × (Market return − Risk-free rate)
+- Only **systematic risk** (non-diversifiable) is rewarded.`,
+      key_terms: {
+        EMH: "Efficient Market Hypothesis — prices reflect all available information",
+        CAPM: "Capital Asset Pricing Model — links expected return to systematic risk (beta)",
+        Beta: "Sensitivity of a stock's returns to market-wide returns",
+        "Minsky Moment": "Sudden market collapse after speculative excess",
+        "Yield Curve": "Plot of bond yields across different maturities",
+      },
+    },
+    Advanced: {
+      id: "fm-adv", topic: "Financial Markets", level: "Advanced",
+      title: "Financial Crises, Systemic Risk & Regulation",
+      content: `### The 2008 Financial Crisis — Anatomy
+1. **Housing bubble**: Low rates + lax lending → subprime mortgages to unqualified buyers.
+2. **Securitization**: Banks bundled mortgages into MBS and CDOs.
+3. **Credit ratings**: Rating agencies gave AAA to toxic instruments.
+4. **Leverage**: Banks held thin capital against massive liabilities.
+
+### Systemic Risk & "Too Big to Fail"
+- **Systemic risk**: Risk that failure of one institution cascades through the whole system.`,
+      key_terms: {
+        MBS: "Mortgage-Backed Security — bonds backed by mortgage payments",
+        "Systemic Risk": "Risk of cascading failures across the financial system",
+        "Too Big to Fail": "Implicit government guarantee for large financial institutions",
+        "Leverage Cycle": "Amplification of booms/busts through rising/falling collateral values",
+        "Shadow Banking": "Bank-like financial intermediaries without bank regulation or deposit insurance",
+      },
+    },
   },
   "Business Cycles": {
     Beginner: {
@@ -493,8 +748,49 @@ Generally, higher risk = higher potential return. Diversification (owning many d
         Peak: "Highest point of an expansion",
       },
     },
-    Intermediate: { id: "bc-int", topic: "Business Cycles", level: "Intermediate", title: "Coming Soon", content: "Intermediate content coming soon.", key_terms: {} },
-    Advanced: { id: "bc-adv", topic: "Business Cycles", level: "Advanced", title: "Coming Soon", content: "Advanced content coming soon.", key_terms: {} },
+    Intermediate: {
+      id: "bc-int", topic: "Business Cycles", level: "Intermediate",
+      title: "Cycle Theories & Policy Responses",
+      content: `### Keynesian View
+Cycles are driven by "Animal Spirits" (waves of optimism/pessimism).
+- Recessions happen when aggregate demand falls.
+- Solution: Government should spend (Fiscal Policy) to fill the gap.
+
+### Real Business Cycle (RBC) Theory
+Cycles are driven by **productivity shocks** (technology, weather, oil prices).
+- Recessions are rational responses to lower productivity.
+- Policy intervention is often unnecessary or harmful.
+
+### The Yield Curve as a Predictor
+When short-term rates are higher than long-term rates (Inverted Yield Curve), it has historically predicted a recession within 12-18 months.`,
+      key_terms: {
+        "Animal Spirits": "Human emotions that drive financial decisions",
+        "RBC Theory": "Cycles caused by real productivity shocks",
+        "Inverted Yield Curve": "When long-term rates fall below short-term rates",
+        "Output Gap": "Difference between actual and potential GDP",
+        "Laissez-faire": "Policy of minimum government interference",
+      },
+    },
+    Advanced: {
+      id: "bc-adv", topic: "Business Cycles", level: "Advanced",
+      title: "Endogenous Cycles & Financial Instability",
+      content: `### The Minsky Cycle
+Hyman Minsky argued that "stability is destabilizing":
+1. **Hedge finance**: Borrowers can pay interest and principal.
+2. **Speculative finance**: Borrowers can only pay interest.
+3. **Ponzi finance**: Borrowers rely on rising asset prices to pay anything.
+4. **Minsky Moment**: Prices stop rising, Ponzi borrowers default, system collapses.
+
+### Real-Financial Linkages
+Financial frictions (like collateral constraints) can amplify small shocks into big cycles. This is the **Financial Accelerator**.`,
+      key_terms: {
+        "Minsky Moment": "Sudden collapse of asset values after a long period of growth",
+        "Financial Accelerator": "Mechanism where financial conditions amplify economic shocks",
+        "Endogenous Cycle": "Cycle generated by internal economic dynamics",
+        "Debt Supercycle": "Long-term accumulation of debt followed by deleveraging",
+        "Secular Stagnation": "Prolonged period of low growth and low interest rates",
+      },
+    },
   },
   "Behavioral Economics": {
     Beginner: {
@@ -513,8 +809,49 @@ Generally, higher risk = higher potential return. Diversification (owning many d
         Nudge: "Subtle policy shift to encourage better choices",
       },
     },
-    Intermediate: { id: "be-int", topic: "Behavioral Economics", level: "Intermediate", title: "Coming Soon", content: "Intermediate content coming soon.", key_terms: {} },
-    Advanced: { id: "be-adv", topic: "Behavioral Economics", level: "Advanced", title: "Coming Soon", content: "Advanced content coming soon.", key_terms: {} },
+    Intermediate: {
+      id: "be-int", topic: "Behavioral Economics", level: "Intermediate",
+      title: "Heuristics, Framing & Choice Architecture",
+      content: `### Heuristics (Mental Shortcuts)
+- **Availability**: Judging probability based on how easily examples come to mind (e.g., fearing sharks more than cars).
+- **Representativeness**: Judging based on stereotypes rather than statistics.
+
+### Framing Effects
+How a choice is presented matters.
+- "90% fat-free" sounds better than "10% fat".
+- **Mental Accounting**: Treating money differently based on where it came from (e.g., spending a tax refund more freely than a salary).
+
+### Choice Architecture
+Designing the environment to help people make better decisions without removing their freedom of choice.`,
+      key_terms: {
+        Heuristic: "Mental shortcut used for decision making",
+        "Framing Effect": "Decisions influenced by how information is presented",
+        "Choice Architecture": "The design of different ways in which choices can be presented",
+        "Availability Bias": "Overestimating importance of information that is easy to recall",
+        "Mental Accounting": "Tendency to categorize money into different 'accounts'",
+      },
+    },
+    Advanced: {
+      id: "be-adv", topic: "Behavioral Economics", level: "Advanced",
+      title: "Game Theory, Reciprocity & Market Design",
+      content: `### Behavioral Game Theory
+Standard theory assumes everyone is perfectly selfish. Behavioral theory finds:
+- **Ultimatum Game**: People reject "unfair" offers even if it means getting nothing.
+- **Public Goods Game**: People cooperate until they see others "free-riding".
+
+### Hyperbolic Discounting
+We prefer small rewards *now* over large rewards *later*, but we're inconsistent.
+- Today: I'll take $10 now over $11 tomorrow.
+- In a year: I'll take $11 in 366 days over $10 in 365 days.
+- This explains why we struggle with saving and dieting.`,
+      key_terms: {
+        "Hyperbolic Discounting": "Preference for immediate rewards that decreases over time",
+        "Game Theory": "Study of strategic interaction between rational decision-makers",
+        "Free-Rider Problem": "When individuals benefit from resources without paying for them",
+        "Bounded Rationality": "Decision-making limited by information, time, and cognitive capacity",
+        "Prospect Theory": "How people choose between probabilistic alternatives involving risk",
+      },
+    },
   },
 };
 

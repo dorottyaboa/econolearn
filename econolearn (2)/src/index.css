@@ -5,11 +5,139 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   --font-serif: "Playfair Display", serif;
+
+  /* Theme Variables */
+  --color-app-bg: var(--bg);
+  --color-app-text: var(--text);
+  --color-app-card: var(--card);
+  --color-app-card-border: var(--card-b);
+  --color-app-card-shadow: var(--card-sh);
+  --color-app-sidebar: var(--sidebar);
+  --color-app-sidebar-border: var(--sb-b);
+  --color-app-btn: var(--btn-bg);
+  --color-app-btn-shadow: var(--btn-sh);
+  --color-app-title: var(--title-col);
+  --color-app-title-shadow: var(--title-sh);
+  --color-app-xp-bg: var(--xp-bg);
+  --color-app-xp-fill: var(--xp-fill);
+  --color-app-xp-border: var(--xp-border);
+  --color-app-accent: var(--accent);
+}
+
+:root {
+  --bg: #f9f6e3;
+  --bg-grad: #ede9d0;
+  --text: #2d2020;
+  --card: #dbe8cd;
+  --card-grad: #cfe0c2;
+  --card-b: #b8c4a4;
+  --card-sh: #8b82a8;
+  --sidebar: #6aa08f;
+  --sb-b: #b8c4a4;
+  --btn-bg: #e8ae7d;
+  --btn-sh: #a56066;
+  --btn-txt: #2d2020;
+  --title-col: #7f4a4f;
+  --title-sh: #b8c4a4;
+  --xp-bg: #4a7a6e;
+  --xp-fill: #e8ae7d;
+  --xp-border: #b8c4a4;
+  --accent: #6aa08f;
+  
+  /* Special card colors */
+  --card-green-bg: #b8c4a4;
+  --card-green-border: #6aa08f;
+  --card-red-bg: #ffd9bc;
+  --card-red-border: #a56066;
+  --card-gold-bg: #fff6ae;
+  --card-gold-border: #e8ae7d;
+}
+
+.dark {
+  --bg: #1e1c2e;
+  --bg-grad: #2a2840;
+  --text: #e3e1c8;
+  --card: #514d86;
+  --card-grad: #5e5a9a;
+  --card-b: #816cb1;
+  --card-sh: #16142a;
+  --sidebar: #16142a;
+  --sb-b: #514d86;
+  --btn-bg: #d289ae;
+  --btn-sh: #8a4a6e;
+  --btn-txt: #16142a;
+  --title-col: #e2d6fa;
+  --title-sh: #816cb1;
+  --xp-bg: #16142a;
+  --xp-fill: #d289ae;
+  --xp-border: #816cb1;
+  --accent: #c5c5ff;
+
+  /* Special card colors */
+  --card-green-bg: #1e2e3a;
+  --card-green-border: #6aa08f;
+  --card-red-bg: #3a1e2a;
+  --card-red-border: #d289ae;
+  --card-gold-bg: #2e2810;
+  --card-gold-border: #e8ae7d;
 }
 
 @layer base {
   body {
-    @apply font-sans antialiased;
+    @apply font-sans antialiased transition-colors duration-300;
+    background-color: var(--bg);
+    background-image: linear-gradient(160deg, var(--bg) 0%, var(--bg-grad) 100%);
+    background-attachment: fixed;
+    color: var(--text);
+  }
+}
+
+/* Custom Utility Classes */
+@layer components {
+  .app-card {
+    @apply rounded-3xl border-4 p-6 transition-all duration-300;
+    background: linear-gradient(135deg, var(--card) 0%, var(--card-grad) 100%);
+    border-color: var(--card-b);
+    box-shadow: 6px 6px 0 var(--card-sh);
+  }
+
+  .app-card-green {
+    @apply rounded-3xl border-4 p-6 transition-all duration-300;
+    background-color: var(--card-green-bg);
+    border-color: var(--card-green-border);
+    box-shadow: 6px 6px 0 var(--card-sh);
+  }
+
+  .app-card-red {
+    @apply rounded-3xl border-4 p-6 transition-all duration-300;
+    background-color: var(--card-red-bg);
+    border-color: var(--card-red-border);
+    box-shadow: 6px 6px 0 var(--card-sh);
+  }
+
+  .app-card-gold {
+    @apply rounded-3xl border-4 p-6 transition-all duration-300;
+    background-color: var(--card-gold-bg);
+    border-color: var(--card-gold-border);
+    box-shadow: 6px 6px 0 var(--card-sh);
+  }
+
+  .app-btn {
+    @apply rounded-2xl font-black uppercase tracking-wider py-3 px-6 transition-all active:translate-y-1;
+    background-color: var(--btn-bg);
+    color: var(--btn-txt);
+    box-shadow: 0 4px 0 var(--btn-sh);
+  }
+
+  .app-btn:hover {
+    @apply -translate-y-0.5;
+    box-shadow: 0 6px 0 var(--btn-sh);
+  }
+
+  .app-title {
+    @apply font-serif font-black tracking-tighter;
+    color: var(--title-col);
+    text-shadow: 3px 3px 0 var(--title-sh);
   }
 }
 

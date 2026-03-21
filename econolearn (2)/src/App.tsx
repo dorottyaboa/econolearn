@@ -126,6 +126,14 @@ export default function App() {
   });
 
   useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
+
+  useEffect(() => {
     try {
       localStorage.setItem("econ_level", level);
       localStorage.setItem("econ_topic", topic);
@@ -155,108 +163,58 @@ export default function App() {
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
-  const renderSidebar = () => (
-    <div className={`w-64 flex-shrink-0 border-r transition-colors duration-300 ${darkMode ? "bg-[#16142a] border-[#514d86]" : "bg-[#6aa08f] border-[#b8c4a4]"} flex flex-col h-screen sticky top-0`}>
-      <div className="p-6 flex items-center justify-between">
-        <h2 className="text-2xl font-black text-[#FDF6E3] flex items-center gap-2 tracking-tighter">
-          <TrendingUp size={28} strokeWidth={3} /> ECONO
-        </h2>
+  const renderTopBar = () => (
+    <div className={`fixed top-0 left-0 right-0 h-16 border-b-4 z-50 transition-colors duration-300 ${darkMode ? "bg-app-sidebar border-app-sidebar-border" : "bg-app-sidebar border-app-sidebar-border"} flex items-center justify-between px-6`}>
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-1 bg-white/10 px-3 py-1 rounded-full border-2 border-white/20">
+          <Flame size={18} className="text-orange-400 fill-orange-400" />
+          <span className="text-sm font-black text-white">{streak}</span>
+        </div>
+        <div className="flex items-center gap-1 bg-white/10 px-3 py-1 rounded-full border-2 border-white/20">
+          <Award size={18} className="text-yellow-400" />
+          <span className="text-sm font-black text-white">{xp}</span>
+        </div>
+      </div>
+      
+      <h2 className="text-xl font-black text-white flex items-center gap-2 tracking-tighter absolute left-1/2 -translate-x-1/2">
+        <TrendingUp size={24} strokeWidth={3} /> ECONO
+      </h2>
+
+      <div className="flex items-center gap-3">
         <button 
           onClick={toggleDarkMode}
-          className={`p-2 rounded-full transition-all ${darkMode ? "bg-[#514d86] text-yellow-400" : "bg-[#4a7a6e] text-white"} hover:scale-110 shadow-lg`}
+          className={`p-2 rounded-xl transition-all ${darkMode ? "bg-app-card-border text-yellow-400" : "bg-app-xp-bg text-white"} hover:scale-110 shadow-lg`}
         >
           {darkMode ? <Sun size={18} /> : <Moon size={18} />}
         </button>
       </div>
+    </div>
+  );
 
-      <div className="px-4 mb-6">
-        <div className={`flex items-center gap-2 px-3 py-2 rounded-xl border-2 ${darkMode ? "bg-[#16142a] border-[#514d86]" : "bg-[#4a7a6e] border-[#b8c4a4]"} text-white/50`}>
-          <Search size={16} />
-          <input 
-            type="text" 
-            placeholder="Search topics..." 
-            className="bg-transparent border-none text-xs font-bold text-white placeholder-white/30 outline-none w-full"
-          />
-        </div>
-      </div>
-
-      <div className="px-6 mb-6">
-        <div className="flex justify-between items-end mb-1">
-          <span className="text-xs font-bold text-[#FDF6E3]">Level {Math.floor(xp / 100)} Explorer ✨</span>
-          <span className="text-xs font-bold text-[#FDF6E3]">{xp} XP</span>
-        </div>
-        <div className={`h-3 w-full rounded-full overflow-hidden ${darkMode ? "bg-[#16142a] border border-[#816cb1]" : "bg-[#4a7a6e] border border-[#b8c4a4]"}`}>
-          <motion.div 
-            initial={{ width: 0 }}
-            animate={{ width: `${xp % 100}%` }}
-            className={`h-full ${darkMode ? "bg-[#d289ae]" : "bg-[#e8ae7d]"}`}
-          />
-        </div>
-        <div className="mt-2 flex items-center gap-1">
-          {streak > 0 && Array.from({ length: Math.min(streak, 5) }).map((_, i) => (
-            <Flame key={i} size={16} className="text-orange-400 fill-orange-400" />
-          ))}
-          <span className="text-xs font-bold text-[#FDF6E3] ml-1">Streak: {streak} days</span>
-        </div>
-      </div>
-
-      <nav className="flex-1 overflow-y-auto px-4 space-y-1">
-        {[
-          { icon: <TrendingUp size={18} />, label: "Home", id: "Home" },
-          { icon: <BookOpen size={18} />, label: "Daily Lesson", id: "Daily Lesson" },
-          { icon: <HelpCircle size={18} />, label: "Quiz", id: "Quiz" },
-          { icon: <Target size={18} />, label: "Scenarios", id: "Scenarios" },
-          { icon: <Edit3 size={18} />, label: "Fill in the Blanks", id: "Fill in the Blanks" },
-          { icon: <LinkIcon size={18} />, label: "Concept Chains", id: "Concept Chains" },
-          { icon: <History size={18} />, label: "Economic History", id: "Economic History" },
-          { icon: <BarChart3 size={18} />, label: "My Progress", id: "My Progress" },
-        ].map((item) => (
-          <button
-            key={item.id}
-            onClick={() => setPage(item.id as Page)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${
-              page === item.id 
-                ? (darkMode ? "bg-[#2a2840] text-[#d289ae] border border-[#816cb1]" : "bg-[#4a7a6e] text-white shadow-inner")
-                : "text-[#FDF6E3] hover:bg-white/10"
-            }`}
-          >
-            {item.icon} {item.label}
-          </button>
-        ))}
-      </nav>
-
-      <div className="p-6 border-t border-white/10">
-        <div className="mb-4">
-          <label className="text-xs font-bold text-[#FDF6E3] uppercase tracking-wider block mb-2">Difficulty</label>
-          <div className="flex gap-1">
-            {LEVELS.map(lvl => (
-              <button
-                key={lvl}
-                onClick={() => setLevel(lvl)}
-                className={`flex-1 py-1 text-[10px] rounded-lg font-black uppercase transition-all ${
-                  level === lvl
-                    ? (lvl === "Beginner" ? "bg-green-500 text-white" : lvl === "Intermediate" ? "bg-orange-500 text-white" : "bg-red-500 text-white")
-                    : "bg-white/10 text-white/50 hover:bg-white/20"
-                }`}
-              >
-                {lvl.substring(0, 3)}
-              </button>
-            ))}
+  const renderBottomNav = () => (
+    <div className={`fixed bottom-0 left-0 right-0 h-20 border-t-4 z-50 transition-colors duration-300 ${darkMode ? "bg-app-sidebar border-app-sidebar-border" : "bg-app-sidebar border-app-sidebar-border"} flex items-center justify-around px-4`}>
+      {[
+        { icon: <TrendingUp size={24} />, label: "Map", id: "Home" },
+        { icon: <HelpCircle size={24} />, label: "Quiz", id: "Quiz" },
+        { icon: <Target size={24} />, label: "Scenarios", id: "Scenarios" },
+        { icon: <History size={24} />, label: "History", id: "Economic History" },
+        { icon: <BarChart3 size={24} />, label: "Stats", id: "My Progress" },
+      ].map((item) => (
+        <button
+          key={item.id}
+          onClick={() => setPage(item.id as Page)}
+          className={`flex flex-col items-center gap-1 transition-all ${
+            page === item.id 
+              ? "text-white scale-110" 
+              : "text-white/40 hover:text-white/60"
+          }`}
+        >
+          <div className={`p-2 rounded-xl ${page === item.id ? "bg-white/20 border-2 border-white/30" : ""}`}>
+            {item.icon}
           </div>
-        </div>
-        <div>
-          <label className="text-xs font-bold text-[#FDF6E3] uppercase tracking-wider block mb-2">Topic</label>
-          <select 
-            value={topic}
-            onChange={(e) => setTopic(e.target.value)}
-            className={`w-full p-2 rounded-xl text-sm font-bold border-none focus:ring-2 focus:ring-white/20 ${darkMode ? "bg-[#2a2840] text-white" : "bg-[#4a7a6e] text-white"}`}
-          >
-            {Object.keys(TOPICS).map(t => (
-              <option key={t} value={t}>{TOPICS[t]} {t}</option>
-            ))}
-          </select>
-        </div>
-      </div>
+          <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
+        </button>
+      ))}
     </div>
   );
 
@@ -270,95 +228,86 @@ export default function App() {
     };
 
     return (
-      <div className="max-w-2xl mx-auto py-12 px-4 space-y-24">
+      <div className="max-w-md mx-auto py-24 px-4 space-y-32">
         {UNITS.map((unit, unitIdx) => (
-          <div key={unit.id} className="space-y-12">
-            <div className={`p-8 rounded-[2.5rem] border-4 ${darkMode ? "bg-[#2a2840] border-[#816cb1] text-white" : "bg-[#6aa08f] border-[#2d2020] text-[#FDF6E3]"} shadow-[12px_12px_0_rgba(0,0,0,0.1)]`}>
-              <h3 className="text-xs font-black uppercase tracking-[0.2em] opacity-80 mb-2">{unit.level}</h3>
-              <h2 className="text-4xl font-black tracking-tighter mb-4">{unit.title}</h2>
-              <p className="text-lg font-medium opacity-90 leading-tight">{unit.description}</p>
+          <div key={unit.id} className="space-y-16">
+            <div className={`p-6 rounded-[2rem] border-4 ${darkMode ? "bg-app-card border-app-card-border text-white" : "bg-app-sidebar border-app-text text-[#FDF6E3]"} shadow-[8px_8px_0_rgba(0,0,0,0.1)] relative overflow-hidden`}>
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <BookOpen size={80} />
+              </div>
+              <h3 className="text-[10px] font-black uppercase tracking-[0.3em] opacity-70 mb-1">Unit {unitIdx + 1}</h3>
+              <h2 className="text-2xl font-black tracking-tighter mb-2">{unit.title}</h2>
+              <p className="text-sm font-medium opacity-90 leading-tight">{unit.description}</p>
             </div>
 
-            <div className="flex flex-col items-center gap-12 relative">
+            <div className="flex flex-col items-center gap-16 relative">
               {/* Path line */}
-              <div className={`absolute top-0 bottom-0 w-2 ${darkMode ? "bg-[#514d86]" : "bg-[#2d2020]/10"} -z-10`} />
+              <div className={`absolute top-0 bottom-0 w-3 ${darkMode ? "bg-app-sidebar" : "bg-app-text/10"} -z-10 rounded-full`} />
               
               {unit.nodes.map((node, nodeIdx) => {
                 const unlocked = isNodeUnlocked(node.id);
                 const completed = completedNodes.includes(node.id);
-                const offset = (nodeIdx % 3 - 1) * 60; // S-curve offset
+                // S-curve logic: alternate left, center, right
+                const positions = [0, 70, 0, -70];
+                const offset = positions[nodeIdx % 4];
 
                 return (
-                  <motion.button
-                    key={node.id}
-                    whileHover={unlocked ? { scale: 1.1, y: -5 } : {}}
-                    whileTap={unlocked ? { scale: 0.95 } : {}}
-                    onClick={() => {
-                      if (unlocked) {
-                        setTopic(node.topic);
-                        setLevel(node.level);
-                        setPage("Daily Lesson");
-                      }
-                    }}
-                    style={{ x: offset }}
-                    className={`relative w-24 h-24 rounded-full border-4 flex items-center justify-center text-4xl shadow-xl transition-all ${
-                      completed 
-                        ? (darkMode ? "bg-[#d289ae] border-[#816cb1]" : "bg-[#e8ae7d] border-[#2d2020]") 
-                        : unlocked 
-                          ? (darkMode ? "bg-[#514d86] border-[#816cb1]" : "bg-white border-[#2d2020]")
-                          : (darkMode ? "bg-[#16142a] border-[#514d86] opacity-50 cursor-not-allowed" : "bg-gray-200 border-gray-300 opacity-50 cursor-not-allowed")
-                    }`}
-                  >
-                    {node.icon}
-                    {completed && (
-                      <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full p-1 border-2 border-white shadow-lg">
-                        <CheckCircle2 size={16} strokeWidth={3} />
-                      </div>
-                    )}
-                    {!unlocked && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-full">
-                        <Zap size={24} className="text-white/50" />
-                      </div>
-                    )}
+                  <div key={node.id} className="relative">
+                    <motion.button
+                      whileHover={unlocked ? { scale: 1.1 } : {}}
+                      whileTap={unlocked ? { scale: 0.95 } : {}}
+                      onClick={() => {
+                        if (unlocked) {
+                          setTopic(node.topic);
+                          setLevel(node.level);
+                          setPage("Daily Lesson");
+                        }
+                      }}
+                      style={{ x: offset }}
+                      className={`relative w-20 h-20 rounded-full border-b-8 flex items-center justify-center text-3xl shadow-xl transition-all ${
+                        completed 
+                          ? "bg-app-btn border-app-btn-shadow text-white" 
+                          : unlocked 
+                            ? "bg-white border-gray-300 text-gray-700"
+                            : "bg-gray-200 border-gray-300 text-gray-400 opacity-50 cursor-not-allowed"
+                      }`}
+                    >
+                      {node.icon}
+                      {completed && (
+                        <div className="absolute -top-1 -right-1 bg-green-500 text-white rounded-full p-1 border-2 border-white shadow-lg">
+                          <CheckCircle2 size={14} strokeWidth={4} />
+                        </div>
+                      )}
+                      {!unlocked && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/5 rounded-full">
+                          <Zap size={20} className="text-gray-400" />
+                        </div>
+                      )}
+                    </motion.button>
                     
-                    {/* Tooltip-like label */}
-                    <div className={`absolute top-full mt-4 whitespace-nowrap px-4 py-2 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest ${
-                      unlocked 
-                        ? (darkMode ? "bg-[#2a2840] border-[#816cb1] text-white" : "bg-white border-[#2d2020] text-[#2d2020]")
-                        : "bg-gray-100 border-gray-200 text-gray-400"
-                    }`}>
+                    {/* Label */}
+                    <div 
+                      style={{ x: offset }}
+                      className={`absolute top-full mt-4 left-1/2 -translate-x-1/2 whitespace-nowrap px-3 py-1 rounded-xl border-2 font-black uppercase text-[9px] tracking-widest ${
+                        unlocked 
+                          ? (darkMode ? "bg-app-card border-app-card-border text-white" : "bg-white border-gray-200 text-gray-600")
+                          : "bg-gray-100 border-gray-200 text-gray-400"
+                      }`}
+                    >
                       {node.title}
                     </div>
-                  </motion.button>
+                  </div>
                 );
               })}
             </div>
           </div>
         ))}
+        <div className="h-20" /> {/* Spacer for bottom nav */}
       </div>
     );
   };
 
-  const renderHome = () => (
-    <div className="space-y-12">
-      <div className="flex flex-col md:flex-row items-end justify-between gap-4 border-b-4 border-current pb-6">
-        <div className="space-y-1">
-          <h1 className={`text-8xl font-black tracking-tighter uppercase leading-[0.85] ${darkMode ? "text-[#e2d6fa]" : "text-[#2d2020]"}`}>
-            Econo<br/>Learn
-          </h1>
-          <p className={`text-sm font-black uppercase tracking-[0.2em] ${darkMode ? "text-[#d289ae]" : "text-[#6aa08f]"}`}>
-            The Global Market Intelligence Portal
-          </p>
-        </div>
-        <div className="text-right hidden md:block">
-          <p className="text-xs font-black uppercase opacity-40">Issue No. 001</p>
-          <p className="text-xs font-black uppercase opacity-40">{new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
-        </div>
-      </div>
-
-      {renderMap()}
-    </div>
-  );
+  const renderHome = () => renderMap();
 
   const renderDailyLesson = () => {
     const lesson = LESSONS[topic]?.[level];
@@ -382,22 +331,22 @@ export default function App() {
             </span>
             <span className="px-4 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-black uppercase">{topic}</span>
           </div>
-          <h2 className="text-4xl font-black">{lesson.title}</h2>
+          <h2 className="text-4xl font-black text-app-text">{lesson.title}</h2>
         </div>
 
-        <div className={`p-8 rounded-[2rem] border-4 prose prose-lg max-w-none ${darkMode ? "bg-[#2a2840] border-[#816cb1] text-white" : "bg-white border-[#b8c4a4] text-[#2d2020]"} markdown-content`}>
+        <div className={`p-8 rounded-[2rem] border-4 prose prose-lg max-w-none bg-app-card border-app-card-border text-app-text markdown-content`}>
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {lesson.content}
           </ReactMarkdown>
         </div>
 
         <div className="space-y-4">
-          <h3 className="text-2xl font-black flex items-center gap-2">
+          <h3 className="text-2xl font-black flex items-center gap-2 text-app-text">
             <Zap className="text-yellow-500" /> Key Terms
           </h3>
           <div className="grid grid-cols-2 gap-4">
             {Object.entries(lesson.key_terms).map(([term, def], i) => (
-              <div key={i} className={`p-4 rounded-2xl border-2 ${darkMode ? "bg-[#514d86] border-[#816cb1]" : "bg-[#f9f6e3] border-[#b8c4a4]"}`}>
+              <div key={i} className={`p-4 rounded-2xl border-2 bg-app-sidebar border-app-sidebar-border text-white`}>
                 <h4 className="font-black mb-1">{term}</h4>
                 <p className="text-sm opacity-70">{def}</p>
               </div>
@@ -408,7 +357,7 @@ export default function App() {
         <div className="flex gap-4 pt-8">
           <button 
             onClick={markAsComplete}
-            className={`flex-1 py-6 rounded-2xl font-black transition-all hover:scale-[1.02] active:scale-[0.98] ${darkMode ? "bg-[#d289ae] text-white shadow-[0_8px_0_#816cb1]" : "bg-[#2d2020] text-white shadow-[0_8px_0_#b8c4a4]"}`}
+            className={`flex-1 py-6 rounded-2xl font-black transition-all hover:scale-[1.02] active:scale-[0.98] bg-app-btn text-white shadow-[0_8px_0_var(--app-btn-shadow)]`}
           >
             Complete Lesson & Return to Map
           </button>
@@ -424,8 +373,8 @@ export default function App() {
     return (
       <div className="max-w-2xl mx-auto space-y-8">
         <div className="text-center">
-          <h2 className="text-4xl font-black mb-2">Quiz Time!</h2>
-          <p className="opacity-60 font-bold">Level: {level}</p>
+          <h2 className="text-4xl font-black mb-2 text-app-text">Quiz Time!</h2>
+          <p className="opacity-60 font-bold text-app-text">Level: {level}</p>
         </div>
 
         {questions.map((q, i) => {
@@ -433,8 +382,8 @@ export default function App() {
           const result = quizAnswers[answerKey];
 
           return (
-            <div key={i} className={`p-8 rounded-[2rem] border-4 ${darkMode ? "bg-[#2a2840] border-[#816cb1]" : "bg-white border-[#b8c4a4]"} shadow-xl space-y-6`}>
-              <h3 className="text-xl font-black">Q{i + 1}: {q.q}</h3>
+            <div key={i} className={`p-8 rounded-[2rem] border-4 bg-app-card border-app-card-border shadow-xl space-y-6`}>
+              <h3 className="text-xl font-black text-app-text">Q{i + 1}: {q.q}</h3>
               
               <div className="space-y-3">
                 {q.options.map((opt, j) => {
@@ -442,11 +391,11 @@ export default function App() {
                   const isSelected = result?.chosen === optLetter;
                   const isCorrect = q.answer === optLetter;
                   
-                  let btnClass = darkMode ? "bg-[#514d86] border-[#816cb1] hover:bg-[#5e5a9a]" : "bg-[#f9f6e3] border-[#b8c4a4] hover:bg-[#f0ecd0]";
+                  let btnClass = "bg-app-sidebar border-app-sidebar-border text-white hover:opacity-90";
                   if (result) {
                     if (isCorrect) btnClass = "bg-green-500 text-white border-green-600";
                     else if (isSelected) btnClass = "bg-red-500 text-white border-red-600";
-                    else btnClass = "opacity-40 bg-gray-100 border-gray-200";
+                    else btnClass = "opacity-40 bg-gray-100 border-gray-200 text-gray-500";
                   }
 
                   return (
@@ -491,7 +440,7 @@ export default function App() {
         {Object.keys(quizAnswers).length >= questions.length && (
           <button 
             onClick={() => setQuizAnswers({})}
-            className="w-full py-4 bg-gray-800 text-white rounded-2xl font-black transition-all hover:bg-black"
+            className="w-full py-4 bg-app-sidebar text-white rounded-2xl font-black transition-all hover:opacity-90"
           >
             Reset Quiz
           </button>
@@ -507,20 +456,20 @@ export default function App() {
     return (
       <div className="max-w-3xl mx-auto space-y-12">
         <div className="text-center">
-          <h2 className="text-4xl font-black mb-2">Real-World Scenarios</h2>
-          <p className="opacity-60 font-bold">Apply your knowledge to solve economic puzzles.</p>
+          <h2 className="text-4xl font-black mb-2 text-app-text">Real-World Scenarios</h2>
+          <p className="opacity-60 font-bold text-app-text">Apply your knowledge to solve economic puzzles.</p>
         </div>
 
         {scenarios.map((s, i) => {
           const revealed = scenarioRevealed[`${level}_${i}`];
           return (
             <div key={i} className="space-y-6">
-              <div className={`p-8 rounded-[2rem] border-4 ${darkMode ? "bg-[#2a2840] border-[#816cb1]" : "bg-white border-[#b8c4a4]"} shadow-xl space-y-6`}>
-                <h3 className="text-2xl font-black text-blue-500">{s.scenario}</h3>
-                <div className={`p-6 rounded-2xl border-2 ${darkMode ? "bg-[#514d86] border-[#816cb1]" : "bg-[#f9f6e3] border-[#b8c4a4]"}`}>
+              <div className={`p-8 rounded-[2rem] border-4 bg-app-card border-app-card-border shadow-xl space-y-6`}>
+                <h3 className="text-2xl font-black text-app-btn">{s.scenario}</h3>
+                <div className={`p-6 rounded-2xl border-2 bg-app-sidebar border-app-sidebar-border text-white`}>
                   <p className="font-bold leading-relaxed">{s.situation}</p>
                 </div>
-                <p className="text-lg font-black italic">❓ {s.question}</p>
+                <p className="text-lg font-black italic text-app-text">❓ {s.question}</p>
                 
                 {!revealed ? (
                   <button 
@@ -528,7 +477,7 @@ export default function App() {
                       setScenarioRevealed(prev => ({ ...prev, [`${level}_${i}`]: true }));
                       awardXp(5);
                     }}
-                    className="w-full py-4 bg-blue-500 text-white rounded-2xl font-black shadow-[0_4px_0_#2563eb] hover:translate-y-1 hover:shadow-[0_2px_0_#2563eb] transition-all"
+                    className="w-full py-4 bg-app-btn text-white rounded-2xl font-black shadow-[0_4px_0_var(--app-btn-shadow)] hover:translate-y-1 hover:shadow-none transition-all"
                   >
                     Reveal Answer
                   </button>
@@ -564,24 +513,24 @@ export default function App() {
     return (
       <div className="max-w-4xl mx-auto space-y-12">
         <div className="text-center">
-          <h2 className="text-4xl font-black mb-2">Economic History</h2>
-          <p className="opacity-60 font-bold">The events that shaped the global economy.</p>
+          <h2 className="text-4xl font-black mb-2 text-app-text">Economic History</h2>
+          <p className="opacity-60 font-bold text-app-text">The events that shaped the global economy.</p>
         </div>
 
-        <div className="space-y-8 relative before:absolute before:left-8 before:top-0 before:bottom-0 before:w-1 before:bg-gray-200 before:hidden md:before:block">
+        <div className="space-y-8 relative before:absolute before:left-8 before:top-0 before:bottom-0 before:w-1 before:bg-app-text/10 before:hidden md:before:block">
           {HISTORY_EVENTS.map((event, i) => (
             <div key={i} className="md:pl-20 relative">
-              <div className="hidden md:flex absolute left-6 top-10 w-5 h-5 rounded-full bg-blue-500 border-4 border-white z-10" />
-              <div className={`p-8 rounded-[2rem] border-4 ${darkMode ? "bg-[#2a2840] border-[#816cb1]" : "bg-white border-[#b8c4a4]"} shadow-xl space-y-4`}>
+              <div className="hidden md:flex absolute left-6 top-10 w-5 h-5 rounded-full bg-app-btn border-4 border-app-card-border z-10" />
+              <div className={`p-8 rounded-[2rem] border-4 bg-app-card border-app-card-border shadow-xl space-y-4`}>
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-black text-blue-500">{event.year}</span>
-                  <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase ${darkMode ? "bg-[#514d86] text-white" : "bg-gray-100 text-gray-600"}`}>
+                  <span className="text-3xl font-black text-app-btn">{event.year}</span>
+                  <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase bg-app-sidebar text-white`}>
                     {event.era}
                   </span>
                 </div>
-                <h3 className="text-2xl font-black">{event.event}</h3>
-                <p className="opacity-80 leading-relaxed">{event.description}</p>
-                <div className={`p-4 rounded-xl border-2 ${darkMode ? "bg-[#514d86] border-[#816cb1]" : "bg-yellow-50 border-yellow-100"}`}>
+                <h3 className="text-2xl font-black text-app-text">{event.event}</h3>
+                <p className="opacity-80 leading-relaxed text-app-text">{event.description}</p>
+                <div className={`p-4 rounded-xl border-2 bg-app-sidebar border-app-sidebar-border text-white/90`}>
                   <p className="text-sm font-bold italic">💡 Lesson: {event.lesson}</p>
                 </div>
               </div>
@@ -595,8 +544,8 @@ export default function App() {
   const renderProgress = () => (
     <div className="max-w-4xl mx-auto space-y-12">
       <div className="text-center">
-        <h2 className="text-4xl font-black mb-2">My Progress</h2>
-        <p className="opacity-60 font-bold">Track your journey to economic mastery.</p>
+        <h2 className="text-4xl font-black mb-2 text-app-text">My Progress</h2>
+        <p className="opacity-60 font-bold text-app-text">Track your journey to economic mastery.</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -606,15 +555,15 @@ export default function App() {
           { label: "Lessons Done", value: completedNodes.length, color: "text-blue-500" },
           { label: "Streak", value: `${streak} days`, color: "text-orange-500" },
         ].map((stat, i) => (
-          <div key={i} className={`p-6 rounded-3xl border-4 text-center ${darkMode ? "bg-[#2a2840] border-[#816cb1]" : "bg-white border-[#b8c4a4]"}`}>
-            <p className="text-xs font-black uppercase tracking-widest opacity-50 mb-1">{stat.label}</p>
+          <div key={i} className={`p-6 rounded-3xl border-4 text-center bg-app-card border-app-card-border`}>
+            <p className="text-xs font-black uppercase tracking-widest opacity-50 mb-1 text-app-text">{stat.label}</p>
             <p className={`text-3xl font-black ${stat.color}`}>{stat.value}</p>
           </div>
         ))}
       </div>
 
       <div className="space-y-6">
-        <h3 className="text-2xl font-black">Badges Earned</h3>
+        <h3 className="text-2xl font-black text-app-text">Badges Earned</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { id: "starter", label: "First Lesson", icon: "🥉", unlocked: completedNodes.length > 0 },
@@ -624,8 +573,8 @@ export default function App() {
           ].map((badge) => (
             <div key={badge.id} className={`p-6 rounded-3xl border-4 text-center transition-all ${
               badge.unlocked 
-                ? (darkMode ? "bg-[#514d86] border-[#d289ae]" : "bg-white border-[#e8ae7d] shadow-lg scale-105") 
-                : "bg-gray-100 border-gray-200 opacity-40 grayscale"
+                ? "bg-app-sidebar border-app-btn text-white shadow-lg scale-105" 
+                : "bg-app-sidebar border-app-sidebar-border opacity-40 grayscale text-white/50"
             }`}>
               <div className="text-4xl mb-2">{badge.icon}</div>
               <p className="font-black text-sm">{badge.label}</p>
@@ -634,7 +583,7 @@ export default function App() {
         </div>
       </div>
 
-      <div className="pt-8 border-t border-gray-200">
+      <div className="pt-8 border-t border-app-text/10">
         <button 
           onClick={() => {
             if (confirm("Are you sure you want to reset all progress?")) {
@@ -657,8 +606,8 @@ export default function App() {
     return (
       <div className="max-w-2xl mx-auto space-y-8">
         <div className="text-center">
-          <h2 className="text-4xl font-black mb-2">Fill in the Blanks</h2>
-          <p className="opacity-60 font-bold">Test your terminology knowledge.</p>
+          <h2 className="text-4xl font-black mb-2 text-app-text">Fill in the Blanks</h2>
+          <p className="opacity-60 font-bold text-app-text">Test your terminology knowledge.</p>
         </div>
 
         {levelQs.map((q, i) => {
@@ -667,8 +616,8 @@ export default function App() {
           const currentInput = fibAnswers[answerKey] || "";
 
           return (
-            <div key={i} className={`p-8 rounded-[2rem] border-4 ${darkMode ? "bg-[#2a2840] border-[#816cb1]" : "bg-white border-[#b8c4a4]"} shadow-xl space-y-6`}>
-              <h3 className="text-xl font-bold leading-relaxed">{i + 1}. {q.sentence}</h3>
+            <div key={i} className={`p-8 rounded-[2rem] border-4 bg-app-card border-app-card-border shadow-xl space-y-6`}>
+              <h3 className="text-xl font-bold leading-relaxed text-app-text">{i + 1}. {q.sentence}</h3>
               
               {!submitted ? (
                 <div className="space-y-4">
@@ -677,10 +626,10 @@ export default function App() {
                     value={currentInput}
                     onChange={(e) => setFibAnswers(prev => ({ ...prev, [answerKey]: e.target.value }))}
                     placeholder="Type your answer here..."
-                    className={`w-full p-4 rounded-xl border-2 font-bold transition-all focus:ring-2 focus:ring-blue-500 outline-none ${darkMode ? "bg-[#16142a] border-[#514d86] text-white" : "bg-gray-50 border-gray-200"}`}
+                    className={`w-full p-4 rounded-xl border-2 font-bold transition-all focus:ring-2 focus:ring-app-btn outline-none bg-app-sidebar border-app-sidebar-border text-white`}
                   />
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-bold opacity-50 italic">💡 Hint: {q.hint}</p>
+                    <p className="text-xs font-bold opacity-50 italic text-app-text">💡 Hint: {q.hint}</p>
                     <button 
                       onClick={() => {
                         if (!currentInput.trim()) return;
@@ -694,7 +643,7 @@ export default function App() {
                           awardXp(2);
                         }
                       }}
-                      className="px-8 py-2 bg-blue-500 text-white rounded-xl font-black shadow-[0_4px_0_#2563eb] hover:translate-y-1 hover:shadow-[0_2px_0_#2563eb] transition-all"
+                      className="px-8 py-2 bg-app-btn text-white rounded-xl font-black shadow-[0_4px_0_var(--app-btn-shadow)] hover:translate-y-1 hover:shadow-none transition-all"
                     >
                       Check
                     </button>
@@ -728,7 +677,7 @@ export default function App() {
               setFibSubmitted({});
               setFibAnswers({});
             }}
-            className="w-full py-4 bg-gray-800 text-white rounded-2xl font-black transition-all hover:bg-black"
+            className="w-full py-4 bg-app-sidebar text-white rounded-2xl font-black transition-all hover:opacity-90"
           >
             Reset Exercises
           </button>
@@ -741,29 +690,29 @@ export default function App() {
     return (
       <div className="max-w-4xl mx-auto space-y-12">
         <div className="text-center">
-          <h2 className="text-4xl font-black mb-2">Concept Chains</h2>
-          <p className="opacity-60 font-bold">See how economic forces cascade through the system.</p>
+          <h2 className="text-4xl font-black mb-2 text-app-text">Concept Chains</h2>
+          <p className="opacity-60 font-bold text-app-text">See how economic forces cascade through the system.</p>
         </div>
 
         <div className="space-y-12">
           {CONCEPT_CONNECTIONS.map((chain, i) => (
-            <div key={i} className={`p-8 rounded-[2rem] border-4 ${darkMode ? "bg-[#2a2840] border-[#816cb1]" : "bg-white border-[#b8c4a4]"} shadow-xl space-y-6`}>
+            <div key={i} className={`p-8 rounded-[2rem] border-4 bg-app-card border-app-card-border shadow-xl space-y-6`}>
               <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-black">{chain.title}</h3>
+                <h3 className="text-2xl font-black text-app-text">{chain.title}</h3>
                 <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase ${level === "Beginner" ? "bg-green-100 text-green-700" : level === "Intermediate" ? "bg-orange-100 text-orange-700" : "bg-red-100 text-red-700"}`}>
                   {chain.level}
                 </span>
               </div>
-              <p className="opacity-70 italic font-bold">"{chain.description}"</p>
+              <p className="opacity-70 italic font-bold text-app-text">"{chain.description}"</p>
               
               <div className="flex flex-wrap items-center gap-3">
                 {chain.concepts.map((concept, j) => (
                   <React.Fragment key={j}>
-                    <div className={`px-4 py-2 rounded-xl border-2 font-bold text-sm ${darkMode ? "bg-[#514d86] border-[#816cb1]" : "bg-[#fff6ae] border-[#e8ae7d]"}`}>
+                    <div className={`px-4 py-2 rounded-xl border-2 font-bold text-sm bg-app-sidebar border-app-sidebar-border text-white`}>
                       {concept}
                     </div>
                     {j < chain.concepts.length - 1 && (
-                      <ChevronRight className="text-gray-400" size={20} />
+                      <ChevronRight className="text-app-text/40" size={20} />
                     )}
                   </React.Fragment>
                 ))}
@@ -775,36 +724,35 @@ export default function App() {
     );
   };
 
-  const renderContent = () => {
-    switch (page) {
-      case "Home": return renderHome();
-      case "Daily Lesson": return renderDailyLesson();
-      case "Quiz": return renderQuiz();
-      case "Scenarios": return renderScenarios();
-      case "Fill in the Blanks": return renderFillInBlanks();
-      case "Concept Chains": return renderConceptChains();
-      case "Economic History": return renderHistory();
-      case "My Progress": return renderProgress();
-      default: return <div className="text-center py-20 opacity-50 italic">Page "{page}" is under construction.</div>;
-    }
-  };
 
   return (
-    <div className={`min-h-screen flex transition-colors duration-300 ${darkMode ? "bg-[#0f0e1c] text-[#e2d6fa]" : "bg-[#f9f6e3] text-[#2d2020]"}`}>
-      {renderSidebar()}
-      <main className="flex-1 p-8 md:p-12 overflow-y-auto">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={page + topic + level}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-          >
-            {renderContent()}
-          </motion.div>
-        </AnimatePresence>
+    <div className={`min-h-screen transition-colors duration-300 bg-app-bg text-app-text font-sans pb-24`}>
+      {renderTopBar()}
+      
+      <main className="pt-16">
+        <div className="max-w-4xl mx-auto p-6">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={page + topic + level}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
+              {page === "Home" && renderHome()}
+              {page === "Daily Lesson" && renderDailyLesson()}
+              {page === "Quiz" && renderQuiz()}
+              {page === "Scenarios" && renderScenarios()}
+              {page === "Fill in the Blanks" && renderFillInBlanks()}
+              {page === "Concept Chains" && renderConceptChains()}
+              {page === "Economic History" && renderHistory()}
+              {page === "My Progress" && renderProgress()}
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </main>
+
+      {renderBottomNav()}
     </div>
   );
 }
